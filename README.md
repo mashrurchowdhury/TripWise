@@ -1,5 +1,10 @@
-# Project title (e.g., "Budge-eats")
-# Platform definition (e.g. Android/mobile, or Windows/desktop).
-# Single-sentence description (e.g., "an Uber-eats app for parakeets!")
-# Team members: names and email addresses for everyone.
-# Team number: corresponding to your team number in Learn.
+# Project Title
+# Platform
+# Single-sentence description
+# Team members
+1. Mashrur Chowdhury (m35chowd@uwaterloo.ca)
+2. Ingrid Crant (i3crant@uwaterloo.ca)
+3. Victor Liu (v37liu@uwaterloo.ca)
+4. ...
+# Team number
+Team 102-2
