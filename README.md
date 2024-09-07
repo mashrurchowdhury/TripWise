@@ -7,6 +7,6 @@
 3. Kevin Zhang (k73zhang@uwaterloo.ca)
 4. Rachel Li (c597li@uwaterloo.ca)
 # Team number
-Team 102-2
+Team102-2
 # Team Contract
 [Team Contract Document](https://uofwaterloo-my.sharepoint.com/:w:/g/personal/m35chowd_uwaterloo_ca/EaTZdVSXV09MqRc5YUTY0mkBg66_SVjHEzNlf-CDEEH4Pw?e=uKTdOu)
