@@ -8,3 +8,5 @@
 4. Rachel Li (c597li@uwaterloo.ca)
 # Team number
 Team 102-2
+#Team Contract
+Link to Team Contract: https://uofwaterloo-my.sharepoint.com/:w:/g/personal/m35chowd_uwaterloo_ca/EaTZdVSXV09MqRc5YUTY0mkBg66_SVjHEzNlf-CDEEH4Pw?e=uKTdOu
