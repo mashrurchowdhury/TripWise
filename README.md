@@ -9,4 +9,4 @@
 # Team number
 Team 102-2
 # Team Contract
-[Team Contract Document](https://uofwaterloo-my.sharepoint.com/:w:/g/personal/m35chowd_uwaterloo_ca/EaTZdVSXV09MqRc5YUTY0mkBg66_SVjHEzNlf-CDEEH4Pw?e=uKTdOu)
+[Team Contract Document](https://git.uwaterloo.ca/m35chowd/team102-2/-/wikis/Team-102-2-Contract)
