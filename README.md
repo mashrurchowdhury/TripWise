@@ -1,4 +1,4 @@
-# Project Title
+# TripWise
 # Platform
 # Single-sentence description
 # Team members
