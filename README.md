@@ -12,5 +12,7 @@ Team 102-2
 [Team Contract Document](https://git.uwaterloo.ca/m35chowd/team102-2/-/wikis/Team-102-2-Contract)
 # Project Proposal
 [Project Proposal Document](https://git.uwaterloo.ca/m35chowd/team102-2/-/wikis/Project-Proposal)
+# Design Proposal
+[Design Proposal Document](https://git.uwaterloo.ca/m35chowd/team102-2)
 # Meeting Minutes
 [List of Meeting Minutes](https://git.uwaterloo.ca/m35chowd/team102-2/-/wikis/Meeting-Minutes)
