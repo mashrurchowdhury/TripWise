@@ -3,7 +3,7 @@ package com.example.tripwise.data
 import java.time.LocalDate
 
 /**
- * A simple data class to represent an Email.
+ * A simple data class to represent a Trip.
  */
 data class Trip(
     val id: Long,
