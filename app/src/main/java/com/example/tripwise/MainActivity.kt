@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.tripwise.ui.screens.LoginScreen
+import com.example.tripwise.ui.navigation.AppNavigation
 import com.example.tripwise.ui.theme.TripwiseTheme
 
 class MainActivity : ComponentActivity() {
@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TripwiseTheme {
-                LoginScreen()
+                AppNavigation()
             }
         }
     }
