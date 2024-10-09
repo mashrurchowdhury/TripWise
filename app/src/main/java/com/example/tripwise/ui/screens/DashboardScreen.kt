@@ -16,9 +16,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Scaffold
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun DashboardScreen(modifier: Modifier) {
+    val user = FirebaseAuth.getInstance().currentUser;
+    val userFirstName = user?.displayName?.split(" ")?.get(0);
+
     val trips = listOf(
         Trip(1,
             "Berlin",
@@ -48,7 +52,7 @@ fun DashboardScreen(modifier: Modifier) {
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "Trips",
+                    text = userFirstName?.let { "$it's Trips" } ?: "Trips",
                     fontSize = 30.sp,
                     modifier = modifier.padding(horizontal = 16.dp, vertical = 25.dp)
                 )
