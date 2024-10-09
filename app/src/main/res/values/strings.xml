@@ -16,4 +16,6 @@
     <string name="app_name">Tripwise</string>
     <string name="label_back">Back</string>
     <string name="jetlagged_app_heading">Tripwise</string>
+    <string name="default_web_client_id">1078750048959-2r6gi6fouki8vdp4i69ocp67q8pn58g9.apps.googleusercontent.com
+    </string>
 </resources>

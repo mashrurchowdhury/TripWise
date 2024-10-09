@@ -9,15 +9,16 @@ import com.example.tripwise.ui.screens.LoginScreen
 import com.example.tripwise.ui.screens.DashboardScreen
 
 @Composable
-fun AppNavigation(modifier: Modifier = Modifier) {
+fun AppNavigation(modifier: Modifier = Modifier, onGoogleSignInClicked: () -> Unit) {
     val navController = rememberNavController()
-
     NavHost(navController, startDestination = "login") {
         composable("login") {
             LoginScreen(
                 modifier = modifier,
+                onGoogleSignInClicked = {
+                    onGoogleSignInClicked()
+                },
                 onLoginClicked = {
-                    // Navigate to the next screen
                     navController.navigate("dashboard")
                 }
             )

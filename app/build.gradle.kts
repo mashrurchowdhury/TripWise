@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -49,6 +50,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit.junit)
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
@@ -75,6 +77,10 @@ dependencies {
     implementation(libs.androidx.compose.ui.googlefonts)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    implementation(libs.firebase.bom)
+    implementation(libs.firebase.auth)
+    implementation(libs.play.services.auth)
 
     implementation(libs.accompanist.flowlayout)
 
