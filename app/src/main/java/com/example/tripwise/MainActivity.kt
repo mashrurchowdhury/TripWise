@@ -16,6 +16,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import androidx.activity.result.contract.ActivityResultContracts
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
 
@@ -73,8 +74,28 @@ class MainActivity : ComponentActivity() {
                     // Sign-in success; print the user's name
                     val user = auth.currentUser
                     Log.d("MainActivity", "User's name: ${user?.displayName}")
-                } else {
-                    Log.w("MainActivity", "signInWithCredential:failure", task.exception)
+
+                    if (user != null && user.email != null) {
+                        // Get Firestore instance
+                        val db = FirebaseFirestore.getInstance()
+
+                        // Create a map of user data
+                        val userData = hashMapOf(
+                            "name" to user.displayName,
+                            "email" to user.email
+                        )
+
+                        db.collection("users").document(user.uid)
+                            .set(userData)
+                            .addOnSuccessListener {
+                                Log.d("MainActivity", "User added to Firestore with UID: ${user.uid}")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("MainActivity", "Error adding user to Firestore", e)
+                            }
+                    } else {
+                        Log.w("MainActivity", "signInWithCredential:failure", task.exception)
+                    }
                 }
             }
     }

@@ -51,6 +51,7 @@ android {
 
 dependencies {
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.google.firebase.firestore.ktx)
     testImplementation(libs.junit.junit)
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
@@ -81,6 +82,8 @@ dependencies {
     implementation(libs.firebase.bom)
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
+    implementation(libs.firebase.firestore)
+
 
     implementation(libs.accompanist.flowlayout)
 
