@@ -19,21 +19,23 @@ import androidx.compose.material3.Scaffold
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun DashboardScreen(modifier: Modifier) {
+fun DashboardScreen(modifier: Modifier, onAddClick: () -> Unit, onEditClick: () -> Unit) {
     val user = FirebaseAuth.getInstance().currentUser;
     val userFirstName = user?.displayName?.split(" ")?.get(0);
 
     val trips = listOf(
         Trip(1,
+            "Eurosolo",
             "Berlin",
-            listOf("Ingrid"),
             "Sample Trip",
+            1400,
             "2024-10-20",
             "2024-11-06"),
         Trip(2,
+            "Interview Onsite",
             "San Francisco",
-            listOf("Ingrid", "Rachel", "Kevin", "Mashrur"),
             "Sample Trip 2",
+            300,
             "2025-01-25",
             "2025-03-02"),
     )
@@ -41,7 +43,7 @@ fun DashboardScreen(modifier: Modifier) {
     Scaffold(
         floatingActionButton = {
             SmallFloatingActionButton(
-                onClick = { /* Add new trip */ }
+                onClick = { onAddClick() }
             ) {
                 Icon(Icons.Filled.Add, "Add a new trip.")
             }
@@ -63,11 +65,12 @@ fun DashboardScreen(modifier: Modifier) {
                     items(items = trips, key = { it.id }) { trip ->
                         TripListItem(
                             trip = trip,
+                            onEditClick = onEditClick,
 //                          navigateToDetail = { /* Navigation to detail */ }
 //                          toggleSelection: {  }
                         )
                     }
-                    // Add extra spacing at the bottom if
+                    // Add extra spacing at the bottom
                     item {
                         Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
                     }
