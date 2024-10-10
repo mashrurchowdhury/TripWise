@@ -21,13 +21,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.background
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.ui.text.style.TextOverflow
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TripListItem(
     trip: Trip,
+    onEditClick: () -> Unit,
 //    navigateToDetail: (Long) -> Unit,
 //    toggleSelection: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -59,34 +60,37 @@ fun TripListItem(
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
-                        text = trip.description,
+                        text = trip.name,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
                     )
                 }
                 IconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = onEditClick,
                     modifier = Modifier
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.StarBorder,
+                        imageVector = Icons.Default.Edit,
                         contentDescription = "Favorite",
                         tint = MaterialTheme.colorScheme.outline
                     )
                 }
             }
-
             Text(
-                text = trip.name,
+                text = trip.city,
                 style = MaterialTheme.typography.labelMedium
             )
             Text(
-                text = trip.people.joinToString(", "),
-                style = MaterialTheme.typography.labelMedium,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                text = trip.description,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
+            )
+            Text(
+                text = trip.budget.toString(),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
             )
         }
     }
