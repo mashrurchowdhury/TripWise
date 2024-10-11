@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tripwise.ui.screens.LoginScreen
 import com.example.tripwise.ui.screens.DashboardScreen
+import com.example.tripwise.ui.screens.TripDetailScreen
 
 @Composable
 fun AppNavigation(modifier: Modifier = Modifier) {
@@ -23,7 +24,15 @@ fun AppNavigation(modifier: Modifier = Modifier) {
             )
         }
         composable("dashboard") {
-            DashboardScreen(modifier = modifier)
+            DashboardScreen(
+                modifier = modifier
+            )
+        }
+        composable(route = "trip") {
+            TripDetailScreen(
+                modifier = modifier,
+                onBackClick = { navController.popBackStack() } // Use popBackStack for back navigation
+            )
         }
     }
 }
