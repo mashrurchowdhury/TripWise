@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun LoginScreen(onLoginClicked: () -> Unit, modifier: Modifier) {
+fun LoginScreen(onGoogleSignInClicked: () -> Unit, modifier: Modifier, onLoginClicked: () -> Unit) {
     Column(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -22,7 +22,10 @@ fun LoginScreen(onLoginClicked: () -> Unit, modifier: Modifier) {
             modifier = Modifier.padding(bottom = 32.dp)
         )
         Button(
-            onClick = { onLoginClicked() }
+            onClick = {
+                onGoogleSignInClicked();
+                onLoginClicked();
+            }
         ) {
             Text("Google")
         }
