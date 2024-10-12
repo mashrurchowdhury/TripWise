@@ -1,6 +1,8 @@
 package com.example.tripwise.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -12,17 +14,18 @@ import com.example.tripwise.ui.screens.DashboardScreen
 import com.example.tripwise.ui.screens.AddEditScreen
 
 @Composable
-fun AppNavigation(navController: NavHostController, onGoogleSignInClicked: () -> Unit, modifier: Modifier = Modifier) {
+fun AppNavigation(
+    navController: NavHostController,
+    onGoogleSignInClicked: () -> Unit,
+    shouldNavigateToDashboard: MutableState<Boolean>,
+    modifier: Modifier = Modifier
+) {
     NavHost(navController, startDestination = "login") {
         composable("login") {
             LoginScreen(
                 modifier = modifier,
                 onGoogleSignInClicked = {
                     onGoogleSignInClicked()
-                },
-                onLoginClicked = {
-                    // Navigate to the next screen
-                    navController.navigate("dashboard")
                 }
             )
         }
@@ -48,6 +51,16 @@ fun AppNavigation(navController: NavHostController, onGoogleSignInClicked: () ->
                     navController.navigateUp()
                 }
             )
+        }
+    }
+
+    // Navigate to dashboard if the state is true
+    LaunchedEffect(shouldNavigateToDashboard.value) {
+        if (shouldNavigateToDashboard.value) {
+            navController.navigate("dashboard") {
+                popUpTo("login") { inclusive = true }
+            }
+            shouldNavigateToDashboard.value = false
         }
     }
 }

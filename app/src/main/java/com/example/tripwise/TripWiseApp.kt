@@ -1,24 +1,17 @@
-import android.app.Activity
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavHostController
+import androidx.compose.runtime.MutableState
 import androidx.navigation.compose.rememberNavController
 import com.example.tripwise.ui.navigation.AppNavigation
 
 @Composable
-fun TripWiseApp(onGoogleSignInClicked: () -> Unit) {
-    val navController = rememberNavController()
-    TripWiseNavHost(
-        onGoogleSignInClicked = onGoogleSignInClicked,
-        navController = navController
-    )
-}
-
-@Composable
-fun TripWiseNavHost(
+fun TripWiseApp(
     onGoogleSignInClicked: () -> Unit,
-    navController: NavHostController
+    shouldNavigateToDashboard: MutableState<Boolean>
 ) {
-    val activity = (LocalContext.current as Activity)
-    AppNavigation(navController, onGoogleSignInClicked)
+    val navController = rememberNavController()
+    AppNavigation(
+        onGoogleSignInClicked = onGoogleSignInClicked,
+        shouldNavigateToDashboard = shouldNavigateToDashboard,
+        navController = navController,
+    )
 }
