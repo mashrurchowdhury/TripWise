@@ -19,7 +19,6 @@ import com.example.tripwise.ui.common.InputField
 import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.example.tripwise.data.FirestoreRepository
 import com.example.tripwise.data.Trip
 

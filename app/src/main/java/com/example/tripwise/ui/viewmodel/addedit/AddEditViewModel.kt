@@ -66,10 +66,8 @@ class AddEditTripViewModel @Inject constructor(
         }
     }
 
-    fun onPrefill(trip: Trip?) {
-        if (trip != null) {
-            _tripState.value = trip
-        }
+    fun onPrefill(trip: Trip) {
+        _tripState.value = trip
     }
 
     private var hasError : Boolean = false

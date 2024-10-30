@@ -1,6 +1,7 @@
 package com.example.tripwise.data
 
 import android.util.Log
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
@@ -12,19 +13,15 @@ class FirestoreRepository {
         return db.collection("users").document(uid).collection("trips").document().id
     }
 
-    fun addTrip(uid: String, trip: Trip) {
+    suspend fun addTrip(uid: String, trip: Trip): Task<Void> {
         val tripRef = db.collection("users").document(uid).collection("trips").document(trip.id)
-        tripRef.get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                Log.d("FirestoreRepository", "Updating trip $trip.id")
-            } else {
-                Log.d("FirestoreRepository", "Adding trip $trip.id")
-            }
-
-            tripRef.set(trip, SetOptions.merge()).addOnFailureListener {
-                Log.d("FirestoreRepository", "Failed to add/update trip $trip.id")
-            }
+        val tripSnapshot = tripRef.get().await()
+        if (tripSnapshot.exists()) {
+            Log.d("FirestoreRepository", "Updating trip $trip.id")
+        } else {
+            Log.d("FirestoreRepository", "Adding trip $trip.id")
         }
+        return tripRef.set(trip, SetOptions.merge())
     }
 
     suspend fun getTrips(uid: String): List<Trip> {
