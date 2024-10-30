@@ -65,6 +65,9 @@ androidComponents {
 
 dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.googleid)
+    implementation(libs.androidx.preference.ktx.v111)
+    implementation(libs.core.ktx)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.core.ktx)
@@ -102,6 +105,8 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.accompanist.systemuicontroller)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.coil.compose)
+    implementation(libs.accompanist.navigation.animation)
 
     // Testing dependencies
     debugImplementation(libs.androidx.monitor)
@@ -131,4 +136,11 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.firestore)
+
+    // Credential manager
+    implementation(libs.androidx.credentials.v130)
+    implementation(libs.play.services.auth)
+    // optional - needed for credentials support from play services, for devices running
+    // Android 13 and below.
+    implementation(libs.androidx.credentials.play.services.auth)
 }
