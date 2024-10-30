@@ -28,7 +28,7 @@ fun DashboardScreen(modifier: Modifier, navController: NavHostController) {
     val firestoreRepository = FirestoreRepository()
     var trips by remember { mutableStateOf(listOf<Trip>()) }
 
-    LaunchedEffect(user) {
+    LaunchedEffect(navController.currentBackStackEntry) {
         user?.let {
             try {
                 trips = firestoreRepository.getTrips(it.uid)

@@ -15,13 +15,14 @@ import androidx.compose.ui.unit.dp
 fun InputField(
     onValueChanged: (String) -> Unit,
     label: String,
-    error: String="",
+    error: String = "",
+    value: String = "",
     isError: Boolean = false,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     var text by remember {
-        mutableStateOf("")
+        mutableStateOf(value)
     }
     Column() {
         OutlinedTextField(
