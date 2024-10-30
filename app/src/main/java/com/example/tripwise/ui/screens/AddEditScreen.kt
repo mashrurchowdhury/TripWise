@@ -1,5 +1,6 @@
 package com.example.tripwise.ui.screens
 
+import android.util.Log
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import com.example.tripwise.ui.viewmodel.addedit.AddEditTripViewModel
@@ -16,20 +17,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.example.tripwise.ui.viewmodel.addedit.RegistrationEvent
 import com.example.tripwise.ui.common.InputField
+import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 
 @Composable
-fun AddEditScreen(addEditTripViewModel: AddEditTripViewModel = hiltViewModel(), modifier: Modifier, onBackClick: () -> Unit) {
+fun AddEditScreen(
+    addEditTripViewModel: AddEditTripViewModel = hiltViewModel(), 
+    modifier: Modifier, 
+    navController: NavHostController,
+    editMode: Boolean,
+    tripId: String? = null,
+    onBackClick: () -> Unit
+) {
     val context = LocalContext.current
     val localFocus = LocalFocusManager.current
+    val user = FirebaseAuth.getInstance().currentUser
 
     LaunchedEffect(key1 = context) {
         addEditTripViewModel.validationEvent.collect { event ->
             when (event) {
                 is ValidationState.Success -> {
                     val trip = event.trip
-                    println("Registered Trip is $trip")
+                    Log.d("AddEditScreen", "Registered Trip is $trip")
                     Toast.makeText(context, "Success", Toast.LENGTH_LONG).show()
                 }
                 else -> {}
@@ -97,13 +108,34 @@ fun AddEditScreen(addEditTripViewModel: AddEditTripViewModel = hiltViewModel(), 
 
                     OutlinedButton(
                         onClick = {
-                            addEditTripViewModel.onAction(RegistrationEvent.Submit)
+                            user?.let {
+                                addEditTripViewModel.onAction(RegistrationEvent.Submit)
+                                addEditTripViewModel.submitTrip(it.uid)
+                            }
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 50.dp, top = 10.dp, end = 50.dp),
                     ) {
                         Text("Submit")
+                    }
+
+                    if (editMode && tripId != null) {
+                        OutlinedButton(
+                            onClick = {
+                                user?.let {
+                                    addEditTripViewModel.deleteTrip(it.uid, tripId)
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 50.dp, top = 10.dp, end = 50.dp),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = MaterialTheme.colorScheme.error
+                            )
+                        ) {
+                            Text("Delete")
+                        }
                     }
                 }
             }

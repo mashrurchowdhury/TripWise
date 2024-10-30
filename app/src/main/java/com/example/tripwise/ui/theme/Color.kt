@@ -18,6 +18,9 @@ package com.example.tripwise.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val TripWiseGreen = Color(0xFFB0EEDA)
+val TripWiseGray = Color(0xFF111111)
+
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)
 val Lilac = Color(0xFFCCB6DC)
