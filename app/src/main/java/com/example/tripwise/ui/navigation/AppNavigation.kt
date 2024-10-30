@@ -43,12 +43,16 @@ fun AppNavigation(
             val tripId = backStackEntry.arguments?.getString("tripId")
             AddEditScreen(
                 modifier = modifier,
-                navController = navController,
                 editMode = editMode,
                 tripId = tripId,
                 onBackClick = {
                     // Go to previous screen
                     navController.navigateUp()
+                },
+                onSubmit = {
+                    navController.navigate(route = "dashboard") {
+                        popUpTo(route = "add-edit") { inclusive = true }
+                    }
                 }
             )
         }

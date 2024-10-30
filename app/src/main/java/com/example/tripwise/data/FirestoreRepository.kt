@@ -1,5 +1,6 @@
 package com.example.tripwise.data
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
@@ -7,18 +8,22 @@ import kotlinx.coroutines.tasks.await
 class FirestoreRepository {
     private val db = FirebaseFirestore.getInstance()
 
-    suspend fun generateTripId(uid: String): String {
+    fun generateTripId(uid: String): String {
         return db.collection("users").document(uid).collection("trips").document().id
     }
 
-    suspend fun addTrip(uid: String, trip: Trip): Boolean {
+    fun addTrip(uid: String, trip: Trip) {
         val tripRef = db.collection("users").document(uid).collection("trips").document(trip.id)
-        val tripSnapshot = tripRef.get().await()
-        return if (tripSnapshot.exists()) {
-            false // Trip ID already exists
-        } else {
-            tripRef.set(trip, SetOptions.merge()).await()
-            true // Trip added successfully
+        tripRef.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.d("FirestoreRepository", "Updating trip $trip.id")
+            } else {
+                Log.d("FirestoreRepository", "Adding trip $trip.id")
+            }
+
+            tripRef.set(trip, SetOptions.merge()).addOnFailureListener {
+                Log.d("FirestoreRepository", "Failed to add/update trip $trip.id")
+            }
         }
     }
 
@@ -30,6 +35,11 @@ class FirestoreRepository {
             document.toObject(Trip::class.java)?.let { trips.add(it) }
         }
         return trips
+    }
+
+    suspend fun getTrip(uid: String, tripId: String): Trip? {
+        val tripRef = db.collection("users").document(uid).collection("trips").document(tripId)
+        return tripRef.get().await()?.toObject(Trip::class.java)
     }
 
     suspend fun deleteTrip(uid: String, tripId: String): Boolean {

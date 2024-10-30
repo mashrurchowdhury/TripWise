@@ -29,8 +29,6 @@ import androidx.compose.ui.text.style.TextOverflow
 fun TripListItem(
     trip: Trip,
     onEditClick: () -> Unit,
-//    navigateToDetail: (Long) -> Unit,
-//    toggleSelection: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(

@@ -66,6 +66,12 @@ class AddEditTripViewModel @Inject constructor(
         }
     }
 
+    fun onPrefill(trip: Trip?) {
+        if (trip != null) {
+            _tripState.value = trip
+        }
+    }
+
     private var hasError : Boolean = false
 
     private fun validateTripRegistration() {
@@ -107,12 +113,16 @@ class AddEditTripViewModel @Inject constructor(
     fun submitTrip(uid: String) {
         viewModelScope.launch {
             val trip = _tripState.value.copy(id = firestoreRepository.generateTripId(uid))
-            val success = firestoreRepository.addTrip(uid, trip)
-            if (success) {
-                validationEvent.emit(ValidationState.Success(trip))
-            } else {
-                Log.w("AddEditTripViewModel", "Could not add trip to Firestore")
-            }
+            firestoreRepository.addTrip(uid, trip)
+            validationEvent.emit(ValidationState.Success(trip))
+        }
+    }
+
+    fun updateTrip(uid: String, tripId: String) {
+        viewModelScope.launch {
+            val trip = _tripState.value.copy(id = tripId)
+            firestoreRepository.addTrip(uid, trip)
+            validationEvent.emit(ValidationState.Success(trip))
         }
     }
 
