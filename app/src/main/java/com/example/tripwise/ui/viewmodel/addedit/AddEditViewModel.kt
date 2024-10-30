@@ -5,15 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tripwise.data.Trip
+import com.example.tripwise.data.FirestoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import android.util.Log
 
 @HiltViewModel
-class AddEditTripViewModel @Inject constructor() : ViewModel() {
+class AddEditTripViewModel @Inject constructor(
+    private val firestoreRepository: FirestoreRepository
+) : ViewModel() {
     private var _tripState = mutableStateOf(Trip())
-    val tripState: State<Trip> = _tripState
 
     private var _errorState = mutableStateOf(FormValidationResult())
     val errorState: State<FormValidationResult> = _errorState
@@ -63,6 +66,10 @@ class AddEditTripViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun onPrefill(trip: Trip) {
+        _tripState.value = trip
+    }
+
     private var hasError : Boolean = false
 
     private fun validateTripRegistration() {
@@ -97,6 +104,34 @@ class AddEditTripViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             if (hasError) {
                 validationEvent.emit(ValidationState.Success(_tripState.value))
+            }
+        }
+    }
+
+    fun submitTrip(uid: String) {
+        viewModelScope.launch {
+            val trip = _tripState.value.copy(id = firestoreRepository.generateTripId(uid))
+            firestoreRepository.addTrip(uid, trip)
+            validationEvent.emit(ValidationState.Success(trip))
+        }
+    }
+
+    fun updateTrip(uid: String, tripId: String) {
+        viewModelScope.launch {
+            val trip = _tripState.value.copy(id = tripId)
+            firestoreRepository.addTrip(uid, trip)
+            validationEvent.emit(ValidationState.Success(trip))
+        }
+    }
+
+    fun deleteTrip(uid: String, tripId: String) {
+        viewModelScope.launch {
+            val success = firestoreRepository.deleteTrip(uid, tripId)
+            if (success) {
+                validationEvent.emit(ValidationState.Success(Trip()))
+                Log.d("AddEditTripViewModel", "Trip deleted successfully")
+            } else {
+                Log.w("AddEditTripViewModel", "Could not delete trip from Firestore")
             }
         }
     }

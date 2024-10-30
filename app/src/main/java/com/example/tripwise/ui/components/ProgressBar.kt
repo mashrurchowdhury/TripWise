@@ -23,8 +23,8 @@ fun ProgressBar(
 
     // Define color based on progress
     val progressColor = when {
-        progress < 0.5f -> Color.Magenta
-        progress < 0.75f -> Color.Magenta
+        progress < 0.5f -> Color.Yellow
+        progress < 0.75f -> Color.Yellow
         else -> Color.Red
     }
 

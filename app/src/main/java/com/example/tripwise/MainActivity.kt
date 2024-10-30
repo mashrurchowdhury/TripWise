@@ -1,13 +1,12 @@
-// MainActivity.kt
 package com.example.tripwise
 
 import TripWiseApp
-import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import com.example.tripwise.ui.theme.TripwiseTheme
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -17,12 +16,15 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.rememberNavController
 import com.google.firebase.firestore.FirebaseFirestore
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
+    private val navigateToDashboard = mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,14 +42,20 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             TripwiseTheme {
-                TripWiseApp(onGoogleSignInClicked = { signIn() })
+                val shouldNavigateToDashboard = remember { navigateToDashboard }
+                TripWiseApp(
+                    onGoogleSignInClicked = { signIn() },
+                    shouldNavigateToDashboard = shouldNavigateToDashboard
+                )
             }
         }
     }
 
     private fun signIn() {
-        val signInIntent = googleSignInClient.signInIntent
-        googleSignInLauncher.launch(signInIntent)
+        googleSignInClient.signOut().addOnCompleteListener {
+            val signInIntent = googleSignInClient.signInIntent
+            googleSignInLauncher.launch(signInIntent)
+        }
     }
 
     private val googleSignInLauncher = registerForActivityResult(
@@ -88,6 +96,8 @@ class MainActivity : ComponentActivity() {
                             .set(userData)
                             .addOnSuccessListener {
                                 Log.d("MainActivity", "User added to Firestore with UID: ${user.uid}")
+                                // Trigger navigation to dashboard
+                                navigateToDashboard.value = true
                             }
                             .addOnFailureListener { e ->
                                 Log.w("MainActivity", "Error adding user to Firestore", e)
