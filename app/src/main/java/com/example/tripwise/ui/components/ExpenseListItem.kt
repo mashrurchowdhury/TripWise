@@ -21,12 +21,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.background
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Edit
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExpenseListItem(
     expense: Expense,
+    onEditClick: () -> Unit,
 //    navigateToDetail: (Long) -> Unit,
 //    toggleSelection: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -63,13 +64,13 @@ fun ExpenseListItem(
                     )
                 }
                 IconButton(
-                    onClick = { /*TODO*/ },
+                    onClick = onEditClick,
                     modifier = Modifier
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.CheckCircle,
+                        imageVector = Icons.Default.Edit,
                         contentDescription = "Favorite",
                         tint = MaterialTheme.colorScheme.outline
                     )

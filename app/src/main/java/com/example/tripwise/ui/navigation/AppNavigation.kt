@@ -13,9 +13,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.tripwise.ui.screens.AddEditExpenseScreen
 import com.example.tripwise.ui.screens.LoginScreen
 import com.example.tripwise.ui.screens.DashboardScreen
 import com.example.tripwise.ui.screens.AddEditScreen
+import com.example.tripwise.ui.screens.TripDetailScreen
 import com.example.tripwise.ui.viewmodel.auth.LoginState
 import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -76,6 +78,31 @@ fun AppNavigation(
                 signInViewModel = signInViewModel,
                 navController = navController
             )
+        }
+        composable("details/{tripID}") {backStackEntry ->
+            val tripID = backStackEntry.arguments?.getString("tripID")?.toLongOrNull()
+//            tripID?.let {
+                TripDetailScreen (
+                    modifier = modifier,
+                    onBackClick = {
+                        // Go to previous screen
+                        navController.navigateUp()
+                    },
+                    onAddClick = {
+                        navController.navigate("add-edit-expense")
+                    },
+                    onEditClick = {
+                        navController.navigate("add-edit-expense")
+                    }
+                )
+//            }
+        }
+        composable("add-edit-expense") {
+            AddEditExpenseScreen(
+                modifier = modifier,
+                onBackClick = {
+                    navController.navigateUp()
+                })
         }
         composable(
             route = "add-edit?editMode={editMode}&tripId={tripId}",

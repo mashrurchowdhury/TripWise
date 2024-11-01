@@ -19,6 +19,15 @@ object FormValidator {
         return budget > 0
     }
 
+    // Expense-specific validations
+    fun validateAmount(amount: Double): Boolean {
+        return amount > 0
+    }
+
+    fun validateCurrency(currency: String): Boolean {
+        return currency.isNotEmpty() && currency.length == 3  // Example: check if it's a 3-letter currency code
+    }
+
     fun validateDates(startDate: String, endDate: String): Boolean {
         //        try {
 //            val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
@@ -42,4 +51,6 @@ data class FormValidationResult(
     val cityStatus: Boolean = false,
     val budgetStatus: Boolean = false,
     val datesStatus: Boolean = false,
+    val amountStatus: Boolean = false,
+    val currencyStatus: Boolean = false,
 )

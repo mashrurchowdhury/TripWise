@@ -56,7 +56,7 @@ fun AddEditScreen(
     LaunchedEffect(context) {
         addEditTripViewModel.validationEvent.collect { event ->
             when (event) {
-                is ValidationState.Success -> {
+                is ValidationState.TripSuccess -> {
                     val trip = event.trip
                     Log.d("AddEditScreen", "Registered Trip is $trip")
                     Toast.makeText(context, "Success", Toast.LENGTH_LONG).show()

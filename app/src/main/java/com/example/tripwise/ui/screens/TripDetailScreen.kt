@@ -18,7 +18,10 @@ import com.example.tripwise.ui.components.ProgressBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TripDetailScreen(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
+fun TripDetailScreen(modifier: Modifier = Modifier,
+                     onBackClick: () -> Unit, //TODO: Implement
+                     onAddClick: () -> Unit,
+                     onEditClick: () -> Unit) {
     val expenses = listOf(
         Expense(
             expenseId = 1,
@@ -65,7 +68,7 @@ fun TripDetailScreen(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
         },
         floatingActionButton = {
             SmallFloatingActionButton(
-                onClick = { /* Add new expense */ },
+                onClick = onAddClick,
                 modifier = Modifier.padding(16.dp)
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Add a new expense")
@@ -102,6 +105,7 @@ fun TripDetailScreen(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
                     items(items = expenses, key = { it.expenseId }) { expense ->
                         ExpenseListItem(
                             expense = expense,
+                            onEditClick = onEditClick,
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
