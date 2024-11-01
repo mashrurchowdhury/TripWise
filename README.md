@@ -32,3 +32,4 @@ Team 102-2
 | Version | Release Date  | Release Notes | APK Link |
 |---------|---------------|---------------|----------|
 | 0.10    | 11-Oct-2024   | [Version 0.10 Release](https://git.uwaterloo.ca/m35chowd/team102-2/-/wikis/releases/v0.10) | [Download APK]( https://drive.google.com/file/d/1qXMwYbL7j7xBaHD8tZi3MuuoVNKkkDr2/view?usp=sharing ) |
+| 0.20.   | 01-Nov-2024   | [Version 0.20 Release](https://git.uwaterloo.ca/m35chowd/team102-2/-/wikis/releases/v0.20) | Download APK (TO BE PLACED)
