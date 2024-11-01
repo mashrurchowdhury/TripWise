@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 fun TripListItem(
     trip: Trip,
     onEditClick: () -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -36,7 +37,7 @@ fun TripListItem(
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .clip(CardDefaults.shape)
             .combinedClickable(
-                onClick = { /* navigateToDetail(trip.id) */ },
+                onClick = onClick,
                 onLongClick = { /* toggleSelection(trip.id) */ }
             )
             .clip(CardDefaults.shape)

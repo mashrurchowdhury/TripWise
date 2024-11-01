@@ -103,7 +103,7 @@ class AddEditTripViewModel @Inject constructor(
 
         viewModelScope.launch {
             if (hasError) {
-                validationEvent.emit(ValidationState.Success(_tripState.value))
+                validationEvent.emit(ValidationState.TripSuccess(_tripState.value))
             }
         }
     }
@@ -112,7 +112,7 @@ class AddEditTripViewModel @Inject constructor(
         viewModelScope.launch {
             val trip = _tripState.value.copy(id = firestoreRepository.generateTripId(uid))
             firestoreRepository.addTrip(uid, trip)
-            validationEvent.emit(ValidationState.Success(trip))
+            validationEvent.emit(ValidationState.TripSuccess(trip))
         }
     }
 
@@ -120,7 +120,7 @@ class AddEditTripViewModel @Inject constructor(
         viewModelScope.launch {
             val trip = _tripState.value.copy(id = tripId)
             firestoreRepository.addTrip(uid, trip)
-            validationEvent.emit(ValidationState.Success(trip))
+            validationEvent.emit(ValidationState.TripSuccess(trip))
         }
     }
 
@@ -128,7 +128,7 @@ class AddEditTripViewModel @Inject constructor(
         viewModelScope.launch {
             val success = firestoreRepository.deleteTrip(uid, tripId)
             if (success) {
-                validationEvent.emit(ValidationState.Success(Trip()))
+                validationEvent.emit(ValidationState.TripSuccess(Trip()))
                 Log.d("AddEditTripViewModel", "Trip deleted successfully")
             } else {
                 Log.w("AddEditTripViewModel", "Could not delete trip from Firestore")

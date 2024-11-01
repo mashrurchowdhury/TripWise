@@ -67,6 +67,7 @@ fun DashboardScreen(
                     items(items = trips, key = { it.id }) { trip ->
                         TripListItem(
                             trip = trip,
+                            onClick = {navController.navigate("details/${trip.id}")},
                             onEditClick = { navController.navigate("add-edit?editMode=true&tripId=${trip.id}") }
                         )
                     }
