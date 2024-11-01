@@ -21,7 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.background
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckBox
+import androidx.compose.material.icons.filled.CheckCircle
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -69,7 +69,7 @@ fun ExpenseListItem(
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.CheckBox,
+                        imageVector = Icons.Default.CheckCircle,
                         contentDescription = "Favorite",
                         tint = MaterialTheme.colorScheme.outline
                     )
