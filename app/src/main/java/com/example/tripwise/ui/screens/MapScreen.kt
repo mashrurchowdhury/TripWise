@@ -17,7 +17,6 @@ fun MapScreen(
         GoogleMap(
             modifier = modifier.fillMaxWidth(),
             onMapLoaded = { isMapLoaded = true },
-            contentPadding = PaddingValues(bottom = 72.dp),
         )
     }
 }

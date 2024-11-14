@@ -4,11 +4,13 @@ import android.widget.Toast
 import EmailPasswordScreen
 import MapScreen
 import SettingsScreen
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -44,20 +46,25 @@ fun AppNavigation(
                 navController.navigate("dashboard") { popUpTo("dashboard") }
                 bottomNavVisible = true
             }
+
             is LoginState.CreateAccountError -> {
                 Toast.makeText(context, "Error Creating Account, " + loginState.message, Toast.LENGTH_SHORT).show()
             }
+
             is LoginState.LoginSuccess -> {
                 navController.navigate("dashboard") { popUpTo("dashboard") }
                 bottomNavVisible = true
             }
+
             is LoginState.LoginError -> {
                 Toast.makeText(context, "Error Logging In, " + loginState.message, Toast.LENGTH_SHORT).show()
             }
+
             is LoginState.LoggedOut -> {
                 navController.navigate("login") { popUpTo("login") }
                 bottomNavVisible = false
             }
+
             is LoginState.LoggedOutError -> {
                 Toast.makeText(context, "Error Logging Out, " + loginState.message, Toast.LENGTH_SHORT).show()
             }
@@ -70,8 +77,7 @@ fun AppNavigation(
                 BottomNavigationBar(modifier, navController)
             }
         }
-    ) {
-        NavHost(
+    ) { NavHost(
             navController,
             startDestination = "login"
         ) {
@@ -97,16 +103,16 @@ fun AppNavigation(
             }
             composable("dashboard") {
                 DashboardScreen(
-                    modifier = modifier,
+                    modifier = modifier.padding(bottom = 40.dp),
                     signInViewModel = signInViewModel,
                     navController = navController
                 )
             }
-            composable("details/{tripID}") {backStackEntry ->
+            composable("details/{tripID}") { backStackEntry ->
                 val tripID = backStackEntry.arguments?.getString("tripID")?.toLongOrNull()
 //            tripID?.let {
-                TripDetailScreen (
-                    modifier = modifier,
+                TripDetailScreen(
+                    modifier = modifier.padding(bottom = 40.dp),
                     onBackClick = {
                         // Go to previous screen
                         navController.navigateUp()
@@ -122,7 +128,7 @@ fun AppNavigation(
             }
             composable("add-edit-expense") {
                 AddEditExpenseScreen(
-                    modifier = modifier,
+                    modifier = modifier.padding(bottom = 40.dp),
                     onBackClick = {
                         navController.navigateUp()
                     })
@@ -137,7 +143,7 @@ fun AppNavigation(
                 val editMode = backStackEntry.arguments?.getBoolean("editMode") ?: false
                 val tripId = backStackEntry.arguments?.getString("tripId")
                 AddEditScreen(
-                    modifier = modifier,
+                    modifier = modifier.padding(bottom = 40.dp),
                     editMode = editMode,
                     tripId = tripId,
                     onBackClick = {
@@ -155,14 +161,14 @@ fun AppNavigation(
                 route = "settings"
             ) {
                 SettingsScreen(
-                    modifier = modifier
+                    modifier = modifier.padding(bottom = 40.dp)
                 )
             }
             composable(
                 route = "maps"
             ) {
                 MapScreen(
-                    modifier = modifier
+                    modifier = modifier.padding(bottom = 40.dp)
                 )
             }
         }
