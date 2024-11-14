@@ -45,7 +45,7 @@ fun DashboardScreen(
     Scaffold(
         floatingActionButton = {
             SmallFloatingActionButton(
-                onClick = { navController.navigate("add-edit?editMode=false") }
+                onClick = { navController.navigate("add-edit-trip?editMode=false") }
             ) {
                 Icon(Icons.Filled.Add, "Add a new trip.")
             }
@@ -67,8 +67,14 @@ fun DashboardScreen(
                     items(items = trips, key = { it.id }) { trip ->
                         TripListItem(
                             trip = trip,
-                            onClick = {navController.navigate("details/${trip.id}")},
-                            onEditClick = { navController.navigate("add-edit?editMode=true&tripId=${trip.id}") }
+                            onClick = { Log.d("Navigation", "Navigating to details screen with tripId: ${trip.id}")
+                                try {
+                                    navController.navigate("details?tripId=${trip.id}")
+                                } catch (e: Exception) {
+                                    Log.e("NavigationError", "Failed to navigate to details screen", e)
+                                }
+                            },
+                            onEditClick = { navController.navigate("add-edit-trip?editMode=true&tripId=${trip.id}") }
                         )
                     }
                     item {

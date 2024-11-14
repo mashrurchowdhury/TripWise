@@ -21,6 +21,7 @@ import com.example.tripwise.ui.screens.TripDetailScreen
 import com.example.tripwise.ui.viewmodel.auth.LoginState
 import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import android.util.Log
 
 @Composable
 fun AppNavigation(
@@ -79,33 +80,64 @@ fun AppNavigation(
                 navController = navController
             )
         }
-        composable("details/{tripID}") {backStackEntry ->
-            val tripID = backStackEntry.arguments?.getString("tripID")?.toLongOrNull()
-//            tripID?.let {
-                TripDetailScreen (
-                    modifier = modifier,
-                    onBackClick = {
-                        // Go to previous screen
-                        navController.navigateUp()
-                    },
-                    onAddClick = {
-                        navController.navigate("add-edit-expense")
-                    },
-                    onEditClick = {
-                        navController.navigate("add-edit-expense")
-                    }
-                )
-//            }
-        }
-        composable("add-edit-expense") {
-            AddEditExpenseScreen(
+        composable("details?tripId={tripId}", arguments = listOf(
+            navArgument("tripId") { type = NavType.StringType },
+        )) { backStackEntry ->
+
+            Log.d("Navigation", "Entering details composable")
+
+            val tripId = backStackEntry.arguments?.getString("tripId")
+
+
+            if (tripId == null) {
+                navController.navigateUp()
+                return@composable
+            }
+
+            TripDetailScreen(
                 modifier = modifier,
+                navController = navController,
+                tripId = tripId,
                 onBackClick = {
+                    // Go to previous screen
                     navController.navigateUp()
-                })
+                },
+            )
         }
         composable(
-            route = "add-edit?editMode={editMode}&tripId={tripId}",
+            route = "add-edit-expense?editMode={editMode}&tripId={tripId}&expenseId={expenseId}",
+            arguments = listOf(
+                navArgument("editMode") { type = NavType.BoolType },
+                navArgument("tripId") { type = NavType.StringType },
+                navArgument("expenseId") { type = NavType.StringType; nullable = true }
+            )
+        ) { backStackEntry ->
+            val editMode = backStackEntry.arguments?.getBoolean("editMode") ?: false
+            val tripId = backStackEntry.arguments?.getString("tripId")
+            val expenseId = backStackEntry.arguments?.getString("expenseId")
+
+            if (tripId == null) {
+                navController.navigateUp()
+                return@composable
+            }
+
+            AddEditExpenseScreen(
+                modifier = modifier,
+                editMode = editMode,
+                tripId = tripId,
+                expenseId = expenseId,
+                onBackClick = {
+                    navController.navigateUp()
+                },
+                onSubmit = {
+                    navController.navigate(route = "details?tripId=$tripId") {
+                        popUpTo(route = "add-edit-expense") { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable(
+            route = "add-edit-trip?editMode={editMode}&tripId={tripId}",
             arguments = listOf(
                 navArgument("editMode") { type = NavType.BoolType },
                 navArgument("tripId") { type = NavType.StringType; nullable = true }
