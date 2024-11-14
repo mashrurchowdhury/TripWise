@@ -82,7 +82,11 @@ fun ExpenseListItem(
                 style = MaterialTheme.typography.labelMedium
             )
             Text(
-                text = expense.currency,
+                text = expense.currency.toString(),
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Text(
+                text = expense.category,
                 style = MaterialTheme.typography.labelMedium,
             )
         }

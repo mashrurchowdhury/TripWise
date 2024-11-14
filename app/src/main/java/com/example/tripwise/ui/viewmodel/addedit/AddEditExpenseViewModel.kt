@@ -9,10 +9,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import java.util.Currency
 
 @HiltViewModel
 class AddEditExpenseViewModel @Inject constructor() : ViewModel() {
-    private var _expenseState = mutableStateOf(Expense(currency = "USD"))
+    private var _expenseState = mutableStateOf(Expense(currency = Currency.getInstance("CAD")))
     val expenseState: State<Expense> = _expenseState
 
     private var _errorState = mutableStateOf(FormValidationResult())
@@ -30,6 +31,11 @@ class AddEditExpenseViewModel @Inject constructor() : ViewModel() {
             is ExpenseEvent.AmountChanged -> {
                 _expenseState.value = _expenseState.value.copy(
                     cost = expenseEvent.amount.toDouble()
+                )
+            }
+            is ExpenseEvent.CategoryChanged -> { // category change
+                _expenseState.value = _expenseState.value.copy(
+                    category = expenseEvent.category
                 )
             }
 
@@ -56,7 +62,7 @@ class AddEditExpenseViewModel @Inject constructor() : ViewModel() {
     private fun validateExpense() {
         val isNameValid = FormValidator.validateName(_expenseState.value.name)
         val isAmountValid = FormValidator.validateAmount(_expenseState.value.cost)
-        val isCurrencyValid = FormValidator.validateCurrency(_expenseState.value.currency)
+        val isCurrencyValid = FormValidator.validateCurrency(_expenseState.value.currency.toString())
 
         _errorState.value = _errorState.value.copy(
             nameStatus = !isNameValid

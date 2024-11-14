@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Add
 import com.example.tripwise.data.Expense
 import com.example.tripwise.ui.components.ExpenseListItem
 import com.example.tripwise.ui.components.ProgressBar
+import java.util.Currency
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +29,7 @@ fun TripDetailScreen(modifier: Modifier = Modifier,
             tripId = 1,
             name = "Plane Ticket",
             cost = 1200.00,
-            currency = "CAD",
+            currency = Currency.getInstance("CAD"),
             date = "2024-11-06"
         ),
         Expense(
@@ -36,7 +37,7 @@ fun TripDetailScreen(modifier: Modifier = Modifier,
             tripId = 1,
             name = "Food",
             cost = 300.00,
-            currency = "CAD",
+            currency = Currency.getInstance("CAD"),
             date = "2024-11-06"
         ),
         Expense(
@@ -44,7 +45,7 @@ fun TripDetailScreen(modifier: Modifier = Modifier,
             tripId = 1,
             name = "Taxi",
             cost = 50.00,
-            currency = "CAD",
+            currency = Currency.getInstance("CAD"),
             date = "2024-11-06"
         )
     )
