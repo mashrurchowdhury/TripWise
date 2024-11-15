@@ -28,20 +28,27 @@ constructor(private val firestoreRepository: FirestoreRepository) : ViewModel() 
             is RegistrationEvent.NameChanged -> {
                 _tripState.value = _tripState.value.copy(name = registrationEvent.name)
             }
+
             is RegistrationEvent.DescriptionChanged -> {
                 _tripState.value =
                         _tripState.value.copy(description = registrationEvent.description)
             }
+
             is RegistrationEvent.BudgetChanged -> {
-                _tripState.value =
-                        _tripState.value.copy(budget = registrationEvent.budget.toIntOrNull() ?: 0)
+                if (registrationEvent.budget.toDoubleOrNull() != null) {
+                    _tripState.value =
+                        _tripState.value.copy(budget = registrationEvent.budget.toDouble())
+                }
             }
+
             is RegistrationEvent.StartDateChanged -> {
                 _tripState.value = _tripState.value.copy(startDate = registrationEvent.startDate)
             }
+
             is RegistrationEvent.EndDateChanged -> {
                 _tripState.value = _tripState.value.copy(endDate = registrationEvent.endDate)
             }
+
             is RegistrationEvent.Submit -> {
                 validateTripRegistration()
             }

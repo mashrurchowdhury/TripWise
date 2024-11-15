@@ -33,11 +33,16 @@ fun TripDetailScreen(modifier: Modifier = Modifier,
     val firestoreRepository = FirestoreRepository()
     val user = FirebaseAuth.getInstance().currentUser
     var expenses by remember { mutableStateOf(listOf<Expense>()) }
+    var expenseTotal by remember { mutableStateOf(0.0) }
+    var budget by remember { mutableStateOf(0.0) }
 
     LaunchedEffect(navController.currentBackStackEntry) {
         user?.let {
             try {
                 expenses = firestoreRepository.getExpenses(it.uid, tripId)
+                expenseTotal = expenses.sumOf{ expense -> expense.convertedCost ?: 0.0 }
+                budget = firestoreRepository.getTrip(it.uid, tripId)?.budget ?: 0.0
+
                 Log.d("DashboardScreen", "Fetched expenses: $expenses")
             } catch (e: Exception) {
                 Log.e("DashboardScreen", "Error fetching expenese", e)
@@ -88,10 +93,12 @@ fun TripDetailScreen(modifier: Modifier = Modifier,
                 )
 
                 // Progress bar (you can adjust the progress value as needed)
-                ProgressBar(
-                    currentAmount = 1550f,
-                    totalAmount = 3000f
-                )
+                if (budget > 0.0) {
+                    ProgressBar(
+                        currentAmount = expenseTotal,
+                        totalAmount = budget
+                    )
+                }
 
                 // Expense list
                 LazyColumn(

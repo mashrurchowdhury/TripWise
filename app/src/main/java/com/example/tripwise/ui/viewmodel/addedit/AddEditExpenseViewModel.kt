@@ -32,9 +32,11 @@ class AddEditExpenseViewModel @Inject constructor(
             }
 
             is ExpenseEvent.AmountChanged -> {
-                _expenseState.value = _expenseState.value.copy(
-                    cost = expenseEvent.amount.toDouble()
-                )
+                if (expenseEvent.amount.toDoubleOrNull() != null) {
+                    _expenseState.value = _expenseState.value.copy(
+                        cost = expenseEvent.amount.toDouble()
+                    )
+                }
             }
 
             is ExpenseEvent.CurrencyChanged -> {
