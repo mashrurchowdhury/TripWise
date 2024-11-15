@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tripwise.data.Expense
 import com.example.tripwise.data.FirestoreRepository
+import com.example.tripwise.data.CurrencyConverter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditExpenseViewModel @Inject constructor(
-    private val firestoreRepository: FirestoreRepository
+    private val firestoreRepository: FirestoreRepository,
+    private val currencyConverter: CurrencyConverter 
 ) : ViewModel() {
     private var _expenseState = mutableStateOf(Expense())
     private var _errorState = mutableStateOf(FormValidationResult())
@@ -92,8 +94,27 @@ class AddEditExpenseViewModel @Inject constructor(
     fun submitExpense(uid: String, tripId: String) {
         viewModelScope.launch {
             try {
-                val expense = _expenseState.value.copy(id = firestoreRepository.generateExpenseId(uid, tripId))
+                // Fetch user settings
+                val settings = firestoreRepository.getUserSettings()
+                val homeCurrency = settings?.homeCurrency ?: "USD" // Default to USD if not set
+
+                // Convert currency
+                val convertedAmount = currencyConverter.convertCurrency(
+                    _expenseState.value.cost,
+                    _expenseState.value.currency,
+                    homeCurrency
+                )
+
+                // Create expense with converted cost
+                val expense = _expenseState.value.copy(
+                    id = firestoreRepository.generateExpenseId(uid, tripId),
+                    convertedCost = convertedAmount
+                )
+
+                // Add expense to Firestore
                 firestoreRepository.addExpense(uid, tripId, expense)
+
+                // Emit success with expense
                 validationEvent.emit(ValidationState.ExpenseSuccess(expense))
             } catch (e: Exception) {
                 Log.e("submitExpense", "Error submitting expense", e)
@@ -103,9 +124,29 @@ class AddEditExpenseViewModel @Inject constructor(
 
     fun updateExpense(uid: String, tripId: String, expenseId: String) {
         viewModelScope.launch {
-            val expense = _expenseState.value.copy(id = expenseId)
-            firestoreRepository.addExpense(uid, tripId, expense)
-            validationEvent.emit(ValidationState.ExpenseSuccess(expense))
+            try {
+                // Fetch user settings
+                val settings = firestoreRepository.getUserSettings()
+                val homeCurrency = settings?.homeCurrency ?: "USD" // Default to USD if not set
+
+                // Convert currency
+                val convertedAmount = currencyConverter.convertCurrency(
+                    _expenseState.value.cost,
+                    _expenseState.value.currency,
+                    homeCurrency
+                )
+                
+                // Create expense with converted cost
+                val expense = _expenseState.value.copy(
+                    id = expenseId,
+                    convertedCost = convertedAmount
+                )
+
+                firestoreRepository.addExpense(uid, tripId, expense)
+                validationEvent.emit(ValidationState.ExpenseSuccess(expense))
+            } catch (e: Exception) {
+                Log.e("updateExpense", "Error updating expense", e)
+            }
         }
     }
 

@@ -65,6 +65,7 @@ fun TripDetailScreen(modifier: Modifier = Modifier,
         },
         floatingActionButton = {
             SmallFloatingActionButton(
+                modifier = Modifier.padding(bottom = 56.dp),
                 onClick = {navController.navigate("add-edit-expense?editMode=false&tripId=$tripId")}
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Add a new expense")

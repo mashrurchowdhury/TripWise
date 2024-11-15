@@ -5,9 +5,16 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
+import com.google.firebase.auth.FirebaseAuth
+
+data class Settings(
+    val name: String = "",
+    val homeCurrency: String = ""
+)
 
 class FirestoreRepository {
     private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
 
     //EXPENSE RELATED FUNCTIONS
 
@@ -106,5 +113,19 @@ class FirestoreRepository {
         } else {
             false // Trip does not exist
         }
+    }
+
+    // SETTINGS RELATED FUNCTIONS
+
+    suspend fun updateUserSettings(settings: Settings) {
+        val uid = auth.currentUser?.uid ?: throw Exception("User not authenticated")
+        val settingsRef = db.collection("users").document(uid)
+        settingsRef.set(settings, SetOptions.merge()).await()
+    }
+
+    suspend fun getUserSettings(): Settings? {
+        val uid = auth.currentUser?.uid ?: throw Exception("User not authenticated")
+        val settingsRef = db.collection("users").document(uid)
+        return settingsRef.get().await()?.toObject(Settings::class.java)
     }
 }
