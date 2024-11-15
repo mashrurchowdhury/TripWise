@@ -1,3 +1,4 @@
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,18 +10,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tripwise.R
+import com.example.tripwise.data.FirestoreRepository
+import com.example.tripwise.data.Settings
+import kotlinx.coroutines.launch
+import android.util.Log
 
 @Composable
 fun SettingsScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    firestoreRepository: FirestoreRepository = FirestoreRepository()
 ) {
-    var name by remember { mutableStateOf(TextFieldValue("John Doe")) }
+    var name by remember { mutableStateOf(TextFieldValue("")) }
+    var homeCurrency by remember { mutableStateOf(TextFieldValue("")) }
     val profilePic: Painter = painterResource(id = R.drawable.placeholder_profile)
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        try {
+            val settings = firestoreRepository.getUserSettings()
+            settings?.let {
+                name = TextFieldValue(it.name)
+                homeCurrency = TextFieldValue(it.homeCurrency)
+            }
+        } catch (e: Exception) {
+            Log.e("SettingsScreen", "Error fetching user settings", e)
+        }
+    }
 
     Column(
         modifier = modifier
@@ -61,10 +83,42 @@ fun SettingsScreen(
 
         Spacer(modifier = modifier.height(20.dp))
 
+        Text(
+            text = "Home Currency",
+            fontSize = 18.sp,
+            color = Color.Gray
+        )
+
+        TextField(
+            value = homeCurrency,
+            onValueChange = { homeCurrency = it },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
         // Save Button
         Button(
-            onClick = { /* Handle save action */ },
-            modifier = modifier.align(Alignment.End)
+            onClick = {
+                val settings = Settings(
+                    name = name.text,
+                    homeCurrency = homeCurrency.text
+                )
+                coroutineScope.launch {
+                    try {
+                        firestoreRepository.updateUserSettings(settings)
+                        // Show success toast
+                        Toast.makeText(context, "Settings updated successfully", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        // Handle error (e.g., show a toast)
+                        Log.e("SettingsScreen", "Error updating settings", e)
+                    }
+                }
+            },
+            modifier = Modifier.align(Alignment.End)
         ) {
             Text("Save")
         }

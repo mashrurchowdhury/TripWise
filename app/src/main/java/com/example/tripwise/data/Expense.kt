@@ -5,6 +5,7 @@ data class Expense(
     val name: String = "",
     val currency: String = "", //TODO: change to Currency eventually
     val cost: Double = 0.0,
+    val convertedCost: Double? = null,
     val date: String = "",
 )
 
