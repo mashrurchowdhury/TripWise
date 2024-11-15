@@ -101,11 +101,13 @@ class AddEditExpenseViewModel @Inject constructor(
                 val homeCurrency = settings?.homeCurrency ?: "USD" // Default to USD if not set
 
                 // Convert currency
-                val convertedAmount = currencyConverter.convertCurrency(
-                    _expenseState.value.cost,
-                    _expenseState.value.currency,
-                    homeCurrency
-                )
+                val convertedAmount = "%.2f".format(
+                    currencyConverter.convertCurrency(
+                        _expenseState.value.cost,
+                        _expenseState.value.currency,
+                        homeCurrency
+                    )
+                ).toDouble()
 
                 // Create expense with converted cost
                 val expense = _expenseState.value.copy(
@@ -132,11 +134,13 @@ class AddEditExpenseViewModel @Inject constructor(
                 val homeCurrency = settings?.homeCurrency ?: "USD" // Default to USD if not set
 
                 // Convert currency
-                val convertedAmount = currencyConverter.convertCurrency(
-                    _expenseState.value.cost,
-                    _expenseState.value.currency,
-                    homeCurrency
-                )
+                val convertedAmount = "%.2f".format(
+                    currencyConverter.convertCurrency(
+                        _expenseState.value.cost,
+                        _expenseState.value.currency,
+                        homeCurrency
+                    )
+                ).toDouble()
                 
                 // Create expense with converted cost
                 val expense = _expenseState.value.copy(

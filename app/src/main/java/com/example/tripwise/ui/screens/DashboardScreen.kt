@@ -46,7 +46,7 @@ fun DashboardScreen(
         modifier = modifier,
         floatingActionButton = {
             SmallFloatingActionButton(
-                modifier = modifier,
+                modifier = Modifier.padding(bottom = 64.dp),
                 onClick = { navController.navigate("add-edit-trip?editMode=false") }
             ) {
                 Icon(Icons.Filled.Add, "Add a new trip.")
