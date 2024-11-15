@@ -36,6 +36,9 @@
                     android:value="androidx.startup"
                     tools:node="remove" />
         </provider>
+        <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="${MAPS_API_KEY}" />
 
         <profileable
                 android:shell="true"
