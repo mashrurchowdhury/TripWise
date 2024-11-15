@@ -20,11 +20,13 @@ import com.example.tripwise.data.FirestoreRepository
 import com.example.tripwise.data.Settings
 import kotlinx.coroutines.launch
 import android.util.Log
+import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
 
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    firestoreRepository: FirestoreRepository = FirestoreRepository()
+    firestoreRepository: FirestoreRepository = FirestoreRepository(),
+    signInViewModel: SignInViewModel
 ) {
     var name by remember { mutableStateOf(TextFieldValue("")) }
     var homeCurrency by remember { mutableStateOf(TextFieldValue("")) }
@@ -107,9 +109,11 @@ fun SettingsScreen(
                     name = name.text,
                     homeCurrency = homeCurrency.text
                 )
+
                 coroutineScope.launch {
                     try {
                         firestoreRepository.updateUserSettings(settings)
+                        signInViewModel.updateUserInformation(settings.name)
                         // Show success toast
                         Toast.makeText(context, "Settings updated successfully", Toast.LENGTH_SHORT).show()
                     } catch (e: Exception) {

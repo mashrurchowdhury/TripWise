@@ -119,13 +119,13 @@ class FirestoreRepository {
 
     suspend fun updateUserSettings(settings: Settings) {
         val uid = auth.currentUser?.uid ?: throw Exception("User not authenticated")
-        val settingsRef = db.collection("users").document(uid).collection("settings").document("userSettings")
+        val settingsRef = db.collection("users").document(uid)
         settingsRef.set(settings, SetOptions.merge()).await()
     }
 
     suspend fun getUserSettings(): Settings? {
         val uid = auth.currentUser?.uid ?: throw Exception("User not authenticated")
-        val settingsRef = db.collection("users").document(uid).collection("settings").document("userSettings")
+        val settingsRef = db.collection("users").document(uid)
         return settingsRef.get().await()?.toObject(Settings::class.java)
     }
 }

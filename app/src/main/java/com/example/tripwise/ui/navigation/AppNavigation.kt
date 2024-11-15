@@ -185,7 +185,8 @@ fun AppNavigation(
                 route = "settings"
             ) {
                 SettingsScreen(
-                    modifier = modifier.padding(bottom = 40.dp)
+                    modifier = modifier.padding(bottom = 40.dp),
+                    signInViewModel = signInViewModel
                 )
             }
             composable(

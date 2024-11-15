@@ -28,7 +28,7 @@ class SignInViewModel @Inject constructor(
         return auth.currentUser
     }
 
-    private fun updateUserInformation(name: String): Task<Void> {
+    fun updateUserInformation(name: String): Task<Void> {
         val profileUpdates = userProfileChangeRequest {
             displayName = name
         }
