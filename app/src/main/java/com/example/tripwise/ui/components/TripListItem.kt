@@ -22,9 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.*
-import androidx.compose.ui.text.style.TextOverflow
-import com.example.tripwise.data.CurrencyConverter
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -34,16 +31,6 @@ fun TripListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var convertedAmount by remember { mutableStateOf<Double?>(null) }
-    val currencyConverter = CurrencyConverter()
-    val coroutineScope = rememberCoroutineScope()
-
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            convertedAmount = currencyConverter.convertCurrency(100.0, "USD", "EUR")
-        }
-    }
-
     Card(
         modifier = modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -88,11 +75,6 @@ fun TripListItem(
                         tint = MaterialTheme.colorScheme.outline
                     )
                 }
-                Text(
-                    text = convertedAmount?.let { "100 USD = $it EUR" } ?: "Converting...",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
-                )
             }
             Text(
                 text = trip.city,
