@@ -36,15 +36,15 @@ fun AppNavigation(
         when (loginState) {
             is LoginState.Initial -> {}
             is LoginState.Loading -> {}
-            is LoginState.CreateAccountSuccess -> navController.navigate("dashboard")
+            is LoginState.CreateAccountSuccess -> navController.navigate("dashboard") { popUpTo("dashboard") }
             is LoginState.CreateAccountError -> {
                 Toast.makeText(context, "Error Creating Account, " + loginState.message, Toast.LENGTH_SHORT).show()
             }
-            is LoginState.LoginSuccess -> navController.navigate("dashboard")
+            is LoginState.LoginSuccess -> navController.navigate("dashboard") { popUpTo("dashboard") }
             is LoginState.LoginError -> {
                 Toast.makeText(context, "Error Logging In, " + loginState.message, Toast.LENGTH_SHORT).show()
             }
-            is LoginState.LoggedOut -> navController.navigate("login") { popUpTo(0) }
+            is LoginState.LoggedOut -> navController.navigate("login") { popUpTo("login") }
             is LoginState.LoggedOutError -> {
                 Toast.makeText(context, "Error Logging Out, " + loginState.message, Toast.LENGTH_SHORT).show()
             }
