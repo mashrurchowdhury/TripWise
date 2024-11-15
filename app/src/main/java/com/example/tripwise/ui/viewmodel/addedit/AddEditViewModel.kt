@@ -34,7 +34,7 @@ constructor(private val firestoreRepository: FirestoreRepository) : ViewModel() 
             }
             is RegistrationEvent.BudgetChanged -> {
                 _tripState.value =
-                        _tripState.value.copy(budget = registrationEvent.budget.toIntOrNull() ?: 0)
+                        _tripState.value.copy(budget = registrationEvent.budget.toDoubleOrNull() ?: 0.0)
             }
             is RegistrationEvent.StartDateChanged -> {
                 _tripState.value = _tripState.value.copy(startDate = registrationEvent.startDate)

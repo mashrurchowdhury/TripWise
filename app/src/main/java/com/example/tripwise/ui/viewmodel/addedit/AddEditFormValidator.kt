@@ -11,7 +11,7 @@ object FormValidator {
         return name.isNotEmpty()
     }
 
-    fun validateBudget(budget: Int): Boolean {
+    fun validateBudget(budget: Double): Boolean {
         return budget > 0
     }
 

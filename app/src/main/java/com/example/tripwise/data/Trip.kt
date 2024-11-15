@@ -10,7 +10,7 @@ data class Trip(
     val name: String = "",
     val city: String = "",
     val description: String = "",
-    val budget: Int = 0,
+    val budget: Double = 0.0,
     val startDate: String = "",
     val endDate: String = "",
 )
