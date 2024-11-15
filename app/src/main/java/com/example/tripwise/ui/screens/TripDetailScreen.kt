@@ -89,8 +89,8 @@ fun TripDetailScreen(modifier: Modifier = Modifier,
 
                 // Progress bar (you can adjust the progress value as needed)
                 ProgressBar(
-                    currentAmount = 1550f,
-                    totalAmount = 3000f
+                    currentAmount = 1550.00,
+                    totalAmount = 3000.00
                 )
 
                 // Expense list

@@ -1,5 +1,6 @@
 package com.example.tripwise.ui.components
 
+import android.annotation.SuppressLint
 import android.graphics.fonts.FontStyle
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -12,14 +13,15 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.graphics.Brush
 
+@SuppressLint("DefaultLocale")
 @Composable
 fun ProgressBar(
-    currentAmount: Float,
-    totalAmount: Float,
+    currentAmount: Double,
+    totalAmount: Double,
     modifier: Modifier = Modifier
 ) {
     // Calculate progress percentage
-    val progress = currentAmount / totalAmount
+    val progress = (currentAmount / totalAmount).toFloat()
 
     // Define color based on progress
     val progressColor = when {
@@ -48,7 +50,7 @@ fun ProgressBar(
 
         // Text showing the progress (e.g., "1100 / 3000")
         Text(
-            text = "${currentAmount.toInt()} / ${totalAmount.toInt()}",
+            text = "${String.format("%.2f", currentAmount)} / ${String.format("%.2f", totalAmount)}",
             color = Color.Black,
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
