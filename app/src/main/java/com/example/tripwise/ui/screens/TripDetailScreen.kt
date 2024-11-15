@@ -40,7 +40,7 @@ fun TripDetailScreen(modifier: Modifier = Modifier,
         user?.let {
             try {
                 expenses = firestoreRepository.getExpenses(it.uid, tripId)
-                expenseTotal = expenses.sumOf{ expense -> expense.cost }
+                expenseTotal = expenses.sumOf{ expense -> expense.convertedCost ?: 0.0 }
                 budget = firestoreRepository.getTrip(it.uid, tripId)?.budget ?: 0.0
 
                 Log.d("DashboardScreen", "Fetched expenses: $expenses")
