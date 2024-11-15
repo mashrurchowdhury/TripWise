@@ -9,6 +9,64 @@ import kotlinx.coroutines.tasks.await
 class FirestoreRepository {
     private val db = FirebaseFirestore.getInstance()
 
+    //EXPENSE RELATED FUNCTIONS
+
+    fun generateExpenseId(uid: String, tripId: String): String {
+        return db.collection("users")
+            .document(uid)
+            .collection("trips")
+            .document(tripId)
+            .collection("expenses")
+            .document().id
+    }
+
+    suspend fun addExpense(uid: String, tripId: String, expense: Expense): Task<Void> {
+        val expenseRef = db.collection("users").document(uid)
+            .collection("trips").document(tripId)
+            .collection("expenses").document(expense.id)
+        val expenseSnapshot = expenseRef.get().await()
+        if (expenseSnapshot.exists()) {
+            Log.d("FirestoreRepository", "Updating expense ${expense.id}")
+        } else {
+            Log.d("FirestoreRepository", "Adding expense ${expense.id}")
+        }
+        return expenseRef.set(expense, SetOptions.merge())
+    }
+
+    suspend fun getExpenses(uid: String, tripId: String): List<Expense> {
+
+        val expenses = mutableListOf<Expense>()
+        val expenseCollection = db.collection("users").document(uid)
+            .collection("trips").document(tripId)
+            .collection("expenses")
+        val expenseSnapshots = expenseCollection.get().await()
+        for (document in expenseSnapshots.documents) {
+            Log.d("FirestoreRepository", "Expense document data: ${document.data}")
+            document.toObject(Expense::class.java)?.let { expenses.add(it) }
+        }
+        return expenses
+    }
+
+
+    suspend fun getExpense(uid: String, tripId: String, expenseId: String): Expense? {
+        val expenseRef = db.collection("users").document(uid).collection("trips").document(tripId).collection("expenses").document(expenseId)
+        return expenseRef.get().await()?.toObject(Expense::class.java)
+    }
+
+    suspend fun deleteExpense(uid: String, tripId: String, expenseId: String): Boolean {
+        val expenseRef = db.collection("users").document(uid).collection("trips").document(tripId).collection("expenses").document(expenseId)
+        val expenseSnapshot = expenseRef.get().await()
+        return if (expenseSnapshot.exists()) {
+            expenseRef.delete().await()
+            true // Expense deleted successfully
+        } else {
+            false // Expense does not exist
+        }
+    }
+
+
+    //TRIP RELATED FUNCTIONS
+
     fun generateTripId(uid: String): String {
         return db.collection("users").document(uid).collection("trips").document().id
     }

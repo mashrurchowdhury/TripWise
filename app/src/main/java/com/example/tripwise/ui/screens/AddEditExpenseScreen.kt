@@ -1,7 +1,7 @@
 package com.example.tripwise.ui.screens
 
+import android.util.Log
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import com.example.tripwise.ui.viewmodel.addedit.ValidationState
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -17,15 +17,43 @@ import com.example.tripwise.ui.viewmodel.addedit.ExpenseEvent
 import com.example.tripwise.ui.common.InputField
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.tripwise.data.Expense
+import com.example.tripwise.data.FirestoreRepository
 import com.example.tripwise.ui.viewmodel.addedit.AddEditExpenseViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hiltViewModel(),
                          modifier: Modifier = Modifier,
-                         onBackClick: () -> Unit
+                         editMode: Boolean,
+                         onBackClick: () -> Unit,
+                         onSubmit: () -> Unit,
+                         tripId: String,
+                         expenseId: String? = null,
 ) {
+    Log.d("Edit Expenses", "Edit mode $editMode")
     val context = LocalContext.current
-    val localFocus = LocalFocusManager.current
+    val firestoreRepository = FirestoreRepository()
+
+    var editableExpense by remember { mutableStateOf<Expense?>(null) }
+    val user = FirebaseAuth.getInstance().currentUser
+
+    LaunchedEffect(user) {
+        user?.let {
+            try {
+                if (editMode  && expenseId != null) {
+                    editableExpense = firestoreRepository.getExpense(it.uid, tripId, expenseId)
+                    editableExpense?.let { expense ->
+                        addEditExpenseViewModel.onPrefill(expense)
+                    }
+                    Log.d("Expense Filled", "Prefilled expense $editableExpense")
+                    Log.d("EditExpenseScreen", "Fetched expense: $editableExpense")
+                }
+            } catch (e: Exception) {
+                Log.e("EditExpenseScreen", "Error fetching expense", e)
+            }
+        }
+    }
 
     LaunchedEffect(key1 = context) {
         addEditExpenseViewModel.validationEvent.collect { event ->
@@ -33,7 +61,9 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
                 is ValidationState.ExpenseSuccess -> {
                     val expense = event.expense
                     println("Registered Expense is $expense")
-                    Toast.makeText(context, "Expense added successfully", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Success", Toast.LENGTH_LONG).show()
+
+                    onSubmit()
                 }
                 else -> {}
             }
@@ -60,44 +90,76 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    InputField(
-                        onValueChanged = {addEditExpenseViewModel.onAction(ExpenseEvent.NameChanged(it)) },
-                        label = "Expense Name",
-                        isError = addEditExpenseViewModel.errorState.value.nameStatus,
-                        error = "Please enter a non-empty name"
-                    )
+                    if (editMode && editableExpense == null) {
+                        CircularProgressIndicator(modifier = modifier)
+                    } else {
+                        InputField(
+                            onValueChanged = {addEditExpenseViewModel.onAction(ExpenseEvent.NameChanged(it)) },
+                            label = "Expense Name",
+                            isError = addEditExpenseViewModel.errorState.value.nameStatus,
+                            error = "Please enter a non-empty name",
+                            value = editableExpense?.name ?: "",
+                        )
 
-                    InputField(
-                        onValueChanged = {addEditExpenseViewModel.onAction(ExpenseEvent.AmountChanged(it)) },
-                        label = "Amount",
-                        isError = addEditExpenseViewModel.errorState.value.amountStatus,
-                        error = "Please enter a valid amount"
-                    )
+                        InputField(
+                            onValueChanged = {addEditExpenseViewModel.onAction(ExpenseEvent.AmountChanged(it)) },
+                            label = "Amount",
+                            isError = addEditExpenseViewModel.errorState.value.amountStatus,
+                            error = "Please enter a valid amount",
+                            value = if ((editableExpense?.cost ?: 0.0) > 0.0) editableExpense?.cost.toString() else "",
+                        )
 
-                    //TODO: Change to a drop down field
-                    InputField(
-                        label = "Currency",
-                        onValueChanged = { addEditExpenseViewModel.onAction(ExpenseEvent.CurrencyChanged(it)) },
-                        isError = addEditExpenseViewModel.errorState.value.currencyStatus,
-                        error = "Please enter a valid currency"
-                    )
+                        //TODO: Change to a drop down field
+                        InputField(
+                            label = "Currency",
+                            onValueChanged = { addEditExpenseViewModel.onAction(ExpenseEvent.CurrencyChanged(it)) },
+                            isError = addEditExpenseViewModel.errorState.value.currencyStatus,
+                            error = "Please enter a valid currency",
+                            value = editableExpense?.currency ?: ""
+                        )
 
-                    InputField(
-                        onValueChanged = { addEditExpenseViewModel.onAction(ExpenseEvent.DateChanged(it)) },
-                        label = "Date (YYYY-MM-DD)",
-                        isError = addEditExpenseViewModel.errorState.value.datesStatus,
-                        error = "Please enter a valid date"
-                    )
+                        InputField(
+                            onValueChanged = { addEditExpenseViewModel.onAction(ExpenseEvent.DateChanged(it)) },
+                            label = "Date (YYYY-MM-DD)",
+                            isError = addEditExpenseViewModel.errorState.value.datesStatus,
+                            error = "Please enter a valid date",
+                            value = editableExpense?.date ?: "",
+                        )
 
-                    OutlinedButton(
-                        onClick = {
-                            addEditExpenseViewModel.onAction(ExpenseEvent.Submit)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 50.dp, top = 10.dp, end = 50.dp),
-                    ) {
-                        Text("Submit Expense")
+                        OutlinedButton(
+                            onClick = {
+                                user?.let { user ->
+                                    if (editMode && tripId != null && expenseId != null) {
+                                        addEditExpenseViewModel.updateExpense(user.uid, tripId, expenseId)
+                                    } else {
+                                        addEditExpenseViewModel.submitExpense(user.uid, tripId)
+                                    }
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 50.dp, top = 10.dp, end = 50.dp),
+                        ) {
+                            Text("Submit Expense")
+                        }
+
+                        if (editMode && expenseId != null) {
+                            OutlinedButton(
+                                onClick = {
+                                    user?.let {
+                                        addEditExpenseViewModel.deleteExpense(it.uid, tripId, expenseId)
+                                    }
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 50.dp, top = 10.dp, end = 50.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.error
+                                )
+                            ) {
+                                Text("Delete")
+                            }
+                        }
                     }
                 }
             }

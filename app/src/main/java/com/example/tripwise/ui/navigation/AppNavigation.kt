@@ -26,6 +26,7 @@ import com.example.tripwise.ui.screens.TripDetailScreen
 import com.example.tripwise.ui.viewmodel.auth.LoginState
 import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import android.util.Log
 
 @Composable
 fun AppNavigation(
