@@ -32,7 +32,7 @@ fun ExpenseListItem(
     homeCurrency: String,
     modifier: Modifier = Modifier,
 ) {
-    val displayCost = if (showLocalCurrency) {
+    val displayCost = if (!showLocalCurrency) {
         "${expense.cost} ${expense.currency}"
     } else {
         "${expense.convertedCost ?: expense.cost} $homeCurrency"
