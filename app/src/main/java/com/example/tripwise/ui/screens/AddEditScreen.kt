@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tripwise.data.FirestoreRepository
 import com.example.tripwise.data.Trip
+import java.util.*
+import android.app.DatePickerDialog
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.DateRange
 
 @Composable
 fun AddEditScreen(
@@ -35,17 +41,18 @@ fun AddEditScreen(
     val firestoreRepository = FirestoreRepository()
 
     val user = FirebaseAuth.getInstance().currentUser
-    var editableTrip by remember { mutableStateOf<Trip?>(null) }
+    val tripState by addEditTripViewModel._tripState
+
 
     LaunchedEffect(user) {
         user?.let {
             try {
                 if (editMode && tripId != null) {
-                    editableTrip = firestoreRepository.getTrip(it.uid, tripId)
-                    editableTrip?.let { trip ->
+                    val fetchedTrip = firestoreRepository.getTrip(it.uid, tripId)
+                    fetchedTrip?.let { trip ->
                         addEditTripViewModel.onPrefill(trip)
                     }
-                    Log.d("AddEditScreen", "Fetched trip: $editableTrip")
+                    Log.d("AddEditScreen", "Fetched trip: $fetchedTrip")
                 }
             } catch (e: Exception) {
                 Log.e("DashboardScreen", "Error fetching trip", e)
@@ -88,51 +95,42 @@ fun AddEditScreen(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState())
                 ) {
-                    if (editMode && editableTrip == null) {
+                    if (editMode && tripState.id.isEmpty()) {
                         CircularProgressIndicator(modifier = modifier)
                     } else {
                         InputField(
                             onValueChanged = { addEditTripViewModel.onAction(RegistrationEvent.NameChanged(it)) },
-                            label = "Name",
-                            value = editableTrip?.name ?: "",
-                            isError = addEditTripViewModel.errorState.value.nameStatus,
-                            error = "Please enter a non-empty name"
-                        )
-
-                        InputField(
-                            onValueChanged = { addEditTripViewModel.onAction(RegistrationEvent.CityChanged(it)) },
-                            label = "City",
-                            value = editableTrip?.city ?: "",
-                            isError = addEditTripViewModel.errorState.value.cityStatus,
-                            error = "Please enter a valid city"
+                            label = "Name *",
+                            value = tripState.name
                         )
 
                         InputField(
                             onValueChanged = { addEditTripViewModel.onAction(RegistrationEvent.DescriptionChanged(it)) },
                             label = "Description",
-                            value = editableTrip?.description ?: "",
+                            value = tripState.description,
                         )
 
                         InputField(
                             onValueChanged = { addEditTripViewModel.onAction(RegistrationEvent.BudgetChanged(it)) },
-                            label = "Budget",
-                            value = if ((editableTrip?.budget ?: 0) > 0) editableTrip?.budget.toString() else "",
+                            label = "Budget *",
+                            value = if (tripState.budget > 0) tripState.budget.toString() else ""
                         )
 
-                        InputField(
-                            onValueChanged = { addEditTripViewModel.onAction(RegistrationEvent.StartDateChanged(it)) },
-                            label = "Start Date (YYYY-MM-DD)",
-                            value = editableTrip?.startDate ?: "",
-                            isError = addEditTripViewModel.errorState.value.datesStatus,
-                            error = "Please enter valid dates"
+                        DatePickerField(
+                            label = "Start Date (YYYY-MM-DD) *",
+                            selectedDate = tripState.startDate,
+                            onDateSelected = { selectedDate ->
+                                addEditTripViewModel.onAction(RegistrationEvent.StartDateChanged(selectedDate))
+                            }
                         )
 
-                        InputField(
-                            onValueChanged = { addEditTripViewModel.onAction(RegistrationEvent.EndDateChanged(it)) },
-                            label = "End Date (YYYY-MM-DD)",
-                            value = editableTrip?.endDate ?: "",
-                            isError = addEditTripViewModel.errorState.value.datesStatus,
-                            error = "Please enter valid dates"
+                        // End Date Picker
+                        DatePickerField(
+                            label = "End Date (YYYY-MM-DD) *",
+                            selectedDate = tripState.endDate,
+                            onDateSelected = { selectedDate ->
+                                addEditTripViewModel.onAction(RegistrationEvent.EndDateChanged(selectedDate))
+                            }
                         )
 
                         OutlinedButton(
@@ -148,6 +146,7 @@ fun AddEditScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(start = 50.dp, top = 10.dp, end = 50.dp),
+                            enabled = !addEditTripViewModel.hasError
                         ) {
                             if (editMode) Text("Update") else Text("Submit")
                         }
@@ -174,4 +173,68 @@ fun AddEditScreen(
             }
         }
     )
+}
+
+@Composable
+fun DatePickerField(
+    label: String,
+    selectedDate: String,
+    onDateSelected: (String) -> Unit,
+    isError: Boolean = false,
+    error: String = ""
+) {
+    val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+
+    if (selectedDate.isNotEmpty()) {
+        val parts = selectedDate.split("-")
+        if (parts.size == 3) {
+            val year = parts[0].toIntOrNull() ?: calendar.get(Calendar.YEAR)
+            val month = (parts[1].toIntOrNull()?.minus(1)) ?: calendar.get(Calendar.MONTH)
+            val day = parts[2].toIntOrNull() ?: calendar.get(Calendar.DAY_OF_MONTH)
+            calendar.set(year, month, day)
+        }
+    }
+
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _, year, month, dayOfMonth ->
+            val formattedDate = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
+            onDateSelected(formattedDate)
+        },
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH)
+    )
+
+    Column(modifier = Modifier.padding(horizontal = 50.dp, vertical = 4.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(4.dp)
+                )
+                .padding(8.dp)
+        ) {
+            IconButton(onClick = { datePickerDialog.show() }) {
+                Icon(Icons.Default.DateRange, contentDescription = "Select Date")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = selectedDate.ifEmpty { label },
+                modifier = Modifier.weight(1f),
+            )
+        }
+        if (isError) {
+            Text(
+                text = error,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(start = 50.dp)
+            )
+        }
+    }
 }
