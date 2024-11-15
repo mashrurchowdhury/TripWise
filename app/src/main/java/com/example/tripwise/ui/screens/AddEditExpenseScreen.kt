@@ -2,7 +2,6 @@ package com.example.tripwise.ui.screens
 
 import android.util.Log
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import com.example.tripwise.ui.viewmodel.addedit.ValidationState
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
@@ -107,7 +106,7 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
                             label = "Amount",
                             isError = addEditExpenseViewModel.errorState.value.amountStatus,
                             error = "Please enter a valid amount",
-                            value = editableExpense?.cost.toString() ?: "",
+                            value = if ((editableExpense?.cost ?: 0.0) > 0.0) editableExpense?.cost.toString() else "",
                         )
 
                         //TODO: Change to a drop down field
