@@ -43,45 +43,46 @@ fun DashboardScreen(
     }
 
     Scaffold(
+        modifier = modifier,
         floatingActionButton = {
             SmallFloatingActionButton(
+                modifier = modifier,
                 onClick = { navController.navigate("add-edit?editMode=false") }
             ) {
                 Icon(Icons.Filled.Add, "Add a new trip.")
             }
-        },
-        content = {
-            Column(
-                modifier = modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.Start
+        }
+    ) {
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(
+                text = userFirstName?.let { "$it's Trips" } ?: "Trips",
+                fontSize = 30.sp,
+                modifier = modifier.padding(horizontal = 16.dp, vertical = 25.dp)
+            )
+
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = userFirstName?.let { "$it's Trips" } ?: "Trips",
-                    fontSize = 30.sp,
-                    modifier = modifier.padding(horizontal = 16.dp, vertical = 25.dp)
-                )
-
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    items(items = trips, key = { it.id }) { trip ->
-                        TripListItem(
-                            trip = trip,
-                            onClick = {navController.navigate("details/${trip.id}")},
-                            onEditClick = { navController.navigate("add-edit?editMode=true&tripId=${trip.id}") }
-                        )
-                    }
-                    item {
-                        Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
-                    }
+                items(items = trips, key = { it.id }) { trip ->
+                    TripListItem(
+                        trip = trip,
+                        onClick = {navController.navigate("details/${trip.id}")},
+                        onEditClick = { navController.navigate("add-edit?editMode=true&tripId=${trip.id}") }
+                    )
                 }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Button(onClick = { signInViewModel.signOut() }) {
-                    Text("Sign Out")
+                item {
+                    Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
                 }
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(onClick = { signInViewModel.signOut() }) {
+                Text("Sign Out")
+            }
         }
-    )
+    }
 }
