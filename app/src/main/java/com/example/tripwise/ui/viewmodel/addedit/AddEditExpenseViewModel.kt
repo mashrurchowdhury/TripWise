@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import java.util.Currency
 
 @HiltViewModel
 class AddEditExpenseViewModel @Inject constructor(
@@ -37,6 +38,11 @@ class AddEditExpenseViewModel @Inject constructor(
                         cost = expenseEvent.amount.toDouble()
                     )
                 }
+            }
+            is ExpenseEvent.CategoryChanged -> { // category change
+                _expenseState.value = _expenseState.value.copy(
+                    category = expenseEvent.category
+                )
             }
 
             is ExpenseEvent.CurrencyChanged -> {
@@ -66,7 +72,7 @@ class AddEditExpenseViewModel @Inject constructor(
     private fun validateExpense() {
         val isNameValid = FormValidator.validateName(_expenseState.value.name)
         val isAmountValid = FormValidator.validateAmount(_expenseState.value.cost)
-        val isCurrencyValid = FormValidator.validateCurrency(_expenseState.value.currency)
+        val isCurrencyValid = FormValidator.validateCurrency(_expenseState.value.currency.toString())
 
         _errorState.value = _errorState.value.copy(
             nameStatus = !isNameValid

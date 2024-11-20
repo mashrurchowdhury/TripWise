@@ -87,6 +87,14 @@ fun ExpenseListItem(
                 text = displayCost,
                 style = MaterialTheme.typography.labelMedium
             )
+            Text(
+                text = expense.currency,
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Text(
+                text = expense.category,
+                style = MaterialTheme.typography.labelMedium,
+            )
         }
     }
 }
