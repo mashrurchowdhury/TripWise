@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     id("com.google.gms.google-services")
     id("com.google.devtools.ksp")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -17,7 +18,7 @@ android {
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "0.20"
+        versionName = "0.30"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         javaCompileOptions {
@@ -68,6 +69,7 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.androidx.preference.ktx.v111)
     implementation(libs.core.ktx)
+    implementation(libs.transportation.consumer)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.core.ktx)
@@ -144,6 +146,20 @@ dependencies {
     // Android 13 and below.
     implementation(libs.androidx.credentials.play.services.auth)
 
-    // Google Places
-    // implementation ter'com.google.android.libraries.places:places:3.1.0'
+    // Google Maps Compose library
+    implementation(libs.maps.compose)
+    // Google Maps Compose utility library
+    implementation(libs.maps.compose.utils)
+    // Google Maps Compose widgets library
+    implementation(libs.maps.compose.widgets)
+}
+
+secrets {
+    // Optionally specify a different file name containing your secrets.
+    // The plugin defaults to "local.properties"
+    propertiesFileName = "secrets.properties"
+
+    // A properties file containing default secret values. This file can be
+    // checked in version control.
+    defaultPropertiesFileName = "local.defaults.properties"
 }

@@ -1,7 +1,6 @@
 package com.example.tripwise.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.runtime.Composable
 import com.example.tripwise.data.Trip
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,7 +21,7 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.runtime.*
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

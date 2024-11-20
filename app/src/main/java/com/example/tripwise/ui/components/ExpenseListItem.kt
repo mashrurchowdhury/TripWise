@@ -28,10 +28,16 @@ import androidx.compose.material.icons.filled.Edit
 fun ExpenseListItem(
     expense: Expense,
     onEditClick: () -> Unit,
-//    navigateToDetail: (Long) -> Unit,
-//    toggleSelection: (Long) -> Unit,
+    showLocalCurrency: Boolean,
+    homeCurrency: String,
     modifier: Modifier = Modifier,
 ) {
+    val displayCost = if (!showLocalCurrency) {
+        "${expense.cost} ${expense.currency}"
+    } else {
+        "${expense.convertedCost ?: expense.cost} $homeCurrency"
+    }
+
     Card(
         modifier = modifier
             .padding(horizontal = 16.dp, vertical = 2.dp)
@@ -55,7 +61,7 @@ fun ExpenseListItem(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text =  expense.date,
+                        text = expense.date,
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Text(
@@ -71,18 +77,18 @@ fun ExpenseListItem(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Favorite",
+                        contentDescription = "Edit",
                         tint = MaterialTheme.colorScheme.outline
                     )
                 }
             }
 
             Text(
-                text = expense.cost.toString(),
+                text = displayCost,
                 style = MaterialTheme.typography.labelMedium
             )
             Text(
-                text = expense.currency.toString(),
+                text = expense.currency,
                 style = MaterialTheme.typography.labelMedium,
             )
             Text(
