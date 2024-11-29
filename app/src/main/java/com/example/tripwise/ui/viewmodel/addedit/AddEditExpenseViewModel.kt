@@ -5,9 +5,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.tripwise.data.CurrencyConverter
 import com.example.tripwise.data.Expense
 import com.example.tripwise.data.FirestoreRepository
-import com.example.tripwise.data.CurrencyConverter
+import com.google.type.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -51,6 +52,13 @@ class AddEditExpenseViewModel @Inject constructor(
                 )
             }
 
+            is ExpenseEvent.LocationSubmitted -> {
+                _expenseState.value = _expenseState.value.copy(
+                    lat = expenseEvent.location.first,
+                    lng = expenseEvent.location.second
+                )
+            }
+
             is ExpenseEvent.Submit -> {
                 validateExpense()
             }
@@ -67,15 +75,13 @@ class AddEditExpenseViewModel @Inject constructor(
         val isNameValid = FormValidator.validateName(_expenseState.value.name)
         val isAmountValid = FormValidator.validateAmount(_expenseState.value.cost)
         val isCurrencyValid = FormValidator.validateCurrency(_expenseState.value.currency)
+        val isLocationValid = FormValidator.validateLocation(_expenseState.value.lat, _expenseState.value.lng)
 
         _errorState.value = _errorState.value.copy(
-            nameStatus = !isNameValid
-        )
-        _errorState.value = _errorState.value.copy(
-            amountStatus = !isAmountValid
-        )
-        _errorState.value = _errorState.value.copy(
-            currencyStatus = !isCurrencyValid
+            nameStatus = !isNameValid,
+            amountStatus = !isAmountValid,
+            currencyStatus = !isCurrencyValid,
+            locationStatus = !isLocationValid
         )
 
         hasError = (
@@ -83,6 +89,7 @@ class AddEditExpenseViewModel @Inject constructor(
                         && !_errorState.value.amountStatus
                         && !_errorState.value.currencyStatus
                         && !_errorState.value.datesStatus
+                        && !_errorState.value.locationStatus
                 )
 
         viewModelScope.launch {
