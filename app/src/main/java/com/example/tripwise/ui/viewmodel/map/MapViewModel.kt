@@ -44,9 +44,6 @@ class MapViewModel @Inject constructor(
         val currentUser = auth.currentUser
         if (currentUser == null) {
             Log.w("MapViewModel", "User not logged in")
-//            viewModelScope.launch {
-//                _eventChannel.send(MapScreenEvent.ShowErrorMessage("User not logged in"))
-//            }
             return
         }
 
@@ -62,19 +59,16 @@ class MapViewModel @Inject constructor(
                     // expensesWithLocation.addAll(expenses.filter { it.location != null })
                     expensesWithLocation.addAll(expenses)
                 } else {
-                    // Fetch expenses for each trip and filter for those with locations
                     for (trip in trips) {
                         val expenses = firestoreRepository.getExpenses(currentUser.uid, trip.id)
                         // expensesWithLocation.addAll(expenses.filter { it.location != null })
                         expensesWithLocation.addAll(expenses)
                     }
                 }
-
                 _expensesWithLocations.value = expensesWithLocation
                 Log.d("MapViewModel", "Fetched expenses with locations: $expensesWithLocation")
             } catch (e: FirebaseFirestoreException) {
                 Log.e("MapViewModel", "Error fetching trips or expenses", e)
-//                _eventChannel.send(MapScreenEvent.ShowErrorMessage("Failed to fetch trips or expenses"))
             } finally {
                 _isLoading.value = false
             }
