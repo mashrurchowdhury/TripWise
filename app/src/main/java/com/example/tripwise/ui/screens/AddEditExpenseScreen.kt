@@ -142,7 +142,6 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
                                 onValueChange = {
                                     addressQuery = it
                                     addLocationViewModel.fetchAutocompletePredictions(it)
-                                    Log.d("AddressQuery", "Updated query: $it")
                                     showDropdown = it.isNotEmpty()
                                 },
                                 label = { Text("Address") },
