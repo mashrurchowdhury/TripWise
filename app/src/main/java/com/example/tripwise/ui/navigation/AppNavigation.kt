@@ -151,9 +151,7 @@ fun AppNavigation(
                         navController.navigateUp()
                     },
                     onSubmit = {
-                        navController.navigate(route = "details?tripId=$tripId") {
-                            popUpTo(route = "add-edit-expense") { inclusive = true }
-                        }
+                        navController.popBackStack()
                     }
                 )
             }
@@ -175,9 +173,7 @@ fun AppNavigation(
                         navController.navigateUp()
                     },
                     onSubmit = {
-                        navController.navigate(route = "dashboard") {
-                            popUpTo(route = "add-edit") { inclusive = true }
-                        }
+                        navController.popBackStack()
                     }
                 )
             }
