@@ -1,29 +1,19 @@
 package com.example.tripwise.ui.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.runtime.Composable
-import com.example.tripwise.data.Expense
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Text
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.background
-import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.Alignment
+import com.example.tripwise.data.Expense
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExpenseListItem(
     expense: Expense,
@@ -40,52 +30,41 @@ fun ExpenseListItem(
 
     Card(
         modifier = modifier
-            .padding(horizontal = 16.dp, vertical = 2.dp)
-            .clip(CardDefaults.shape)
-            .combinedClickable(
-                onClick = { /* navigateToDetail(trip.id) */ },
-                onLongClick = { /* toggleSelection(trip.id) */ }
-            )
-            .clip(CardDefaults.shape)
+            .padding(horizontal = 8.dp)
+            .fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Column(
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(vertical = 4.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = expense.date,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = expense.name,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-                IconButton(
-                    onClick = onEditClick,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit",
-                        tint = MaterialTheme.colorScheme.outline
-                    )
-                }
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = expense.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = 18.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = expense.date,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
             }
 
             Text(
                 text = displayCost,
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(end = 8.dp)
             )
             Text(
                 text = expense.currency,
@@ -95,6 +74,17 @@ fun ExpenseListItem(
                 text = expense.category,
                 style = MaterialTheme.typography.labelMedium,
             )
+
+            IconButton(
+                onClick = onEditClick,
+                modifier = Modifier.size(36.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }

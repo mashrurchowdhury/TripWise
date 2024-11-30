@@ -18,16 +18,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
-import androidx.compose.material3.Scaffold
 import androidx.navigation.NavHostController
 
 @Composable
 fun DashboardScreen(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     navController: NavHostController,
     signInViewModel: SignInViewModel
 ) {
-    val userFirstName = signInViewModel.getCurrentUser()?.displayName?.split(" ")?.get(0);
+    val userFirstName = signInViewModel.getCurrentUser()?.displayName?.split(" ")?.get(0)
     val firestoreRepository = FirestoreRepository()
     var trips by remember { mutableStateOf(listOf<Trip>()) }
 
@@ -52,15 +51,15 @@ fun DashboardScreen(
                 Icon(Icons.Filled.Add, "Add a new trip.")
             }
         }
-    ) {
+    ) { padding ->
         Column(
-            modifier = modifier,
+            modifier = Modifier.padding(padding),
             horizontalAlignment = Alignment.Start
         ) {
             Text(
                 text = userFirstName?.let { "$it's Trips" } ?: "Trips",
-                fontSize = 30.sp,
-                modifier = modifier.padding(horizontal = 16.dp, vertical = 25.dp)
+                fontSize = 28.sp,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
             )
 
             LazyColumn(
@@ -69,25 +68,22 @@ fun DashboardScreen(
                 items(items = trips, key = { it.id }) { trip ->
                     TripListItem(
                         trip = trip,
-                        onClick = { Log.d("Navigation", "Navigating to details screen with tripId: ${trip.id}")
+                        onClick = {
+                            Log.d("Navigation", "Navigating to details screen with tripId: ${trip.id}")
                             try {
                                 navController.navigate("details?tripId=${trip.id}")
                             } catch (e: Exception) {
                                 Log.e("NavigationError", "Failed to navigate to details screen", e)
                             }
                         },
-                        onEditClick = { navController.navigate("add-edit-trip?editMode=true&tripId=${trip.id}") }
+                        onEditClick = {
+                            navController.navigate("add-edit-trip?editMode=true&tripId=${trip.id}")
+                        }
                     )
                 }
                 item {
                     Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.systemBars))
                 }
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Button(onClick = { signInViewModel.signOut() }) {
-                Text("Sign Out")
             }
         }
     }

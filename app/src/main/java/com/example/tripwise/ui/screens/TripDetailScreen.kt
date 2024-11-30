@@ -2,17 +2,19 @@ package com.example.tripwise.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
 import androidx.navigation.NavHostController
 import com.example.tripwise.data.Expense
 import com.example.tripwise.data.FirestoreRepository
@@ -35,18 +37,20 @@ fun TripDetailScreen(
     var budget by remember { mutableStateOf(0.0) }
     var showLocalCurrency by remember { mutableStateOf(false) }
     var homeCurrency by remember { mutableStateOf("CAD") }
+    var tripName by remember { mutableStateOf("Trip Expenses") }
 
     LaunchedEffect(navController.currentBackStackEntry) {
         user?.let {
             try {
                 expenses = firestoreRepository.getExpenses(it.uid, tripId)
-                expenseTotal = expenses.sumOf{ expense -> expense.convertedCost ?: 0.0 }
+                expenseTotal = expenses.sumOf { expense -> expense.convertedCost ?: 0.0 }
                 budget = firestoreRepository.getTrip(it.uid, tripId)?.budget ?: 0.0
                 homeCurrency = firestoreRepository.getUserSettings()?.homeCurrency ?: "CAD"
+                tripName = firestoreRepository.getTrip(it.uid, tripId)?.name ?: "Trip Expenses"
 
-                Log.d("DashboardScreen", "Fetched expenses: $expenses")
+                Log.d("TripDetailScreen", "Fetched expenses: $expenses")
             } catch (e: Exception) {
-                Log.e("DashboardScreen", "Error fetching expenses", e)
+                Log.e("TripDetailScreen", "Error fetching expenses", e)
             }
         }
     }
@@ -56,27 +60,25 @@ fun TripDetailScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Trip Expenses", // TODO: Change to trip name
+                        text = tripName,
                         fontSize = 20.sp
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
-                actions = {},
                 modifier = Modifier.fillMaxWidth()
             )
         },
         floatingActionButton = {
-            SmallFloatingActionButton(
-                modifier = Modifier.padding(bottom = 64.dp),
+            FloatingActionButton(
                 onClick = {
                     navController.navigate("add-edit-expense?editMode=false&tripId=$tripId")
                 }
             ) {
-                Icon(Icons.Filled.Add, contentDescription = "Add a new expense")
+                Icon(Icons.Default.Add, contentDescription = "Add a new expense")
             }
         },
         content = { paddingValues ->
@@ -84,10 +86,10 @@ fun TripDetailScreen(
                 modifier = modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Toggle for currency display
+                // Currency Toggle
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -103,26 +105,29 @@ fun TripDetailScreen(
                     Text(text = "Home Currency", modifier = Modifier.padding(start = 8.dp))
                 }
 
-                // Heading
-                Text(
-                    text = "Expense Summary",
-                    fontSize = 24.sp,
-                    modifier = Modifier.padding(vertical = 16.dp)
-                )
-
-                // Progress bar
+                // Progress Bar with Gradient
                 if (budget > 0.0) {
-                    ProgressBar(
-                        currentAmount = expenseTotal,
-                        totalAmount = budget
-                    )
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "${String.format("%.2f", expenseTotal)} / ${String.format("%.2f", budget)}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                        )
+                        ProgressBar(
+                            currentAmount = expenseTotal,
+                            totalAmount = budget
+                        )
+                    }
                 }
 
-                // Expense list
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Expense List
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = PaddingValues(vertical = 8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(items = expenses, key = { it.id }) { expense ->
                         ExpenseListItem(
@@ -134,9 +139,6 @@ fun TripDetailScreen(
                             },
                             modifier = Modifier.fillMaxWidth()
                         )
-                    }
-                    item {
-                        Spacer(Modifier.height(50.dp))
                     }
                 }
             }
