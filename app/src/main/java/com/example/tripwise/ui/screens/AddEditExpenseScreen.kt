@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.ui.platform.LocalContext
 import com.example.tripwise.ui.viewmodel.addedit.ValidationState
 import android.widget.Toast
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import com.example.tripwise.ui.viewmodel.addedit.ExpenseEvent
 import com.example.tripwise.ui.common.InputField
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tripwise.data.Expense
 import com.example.tripwise.data.FirestoreRepository
@@ -140,15 +142,19 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
                                 onValueChange = {
                                     addressQuery = it
                                     addLocationViewModel.fetchAutocompletePredictions(it)
+                                    Log.d("AddressQuery", "Updated query: $it")
                                     showDropdown = it.isNotEmpty()
                                 },
                                 label = { Text("Address") },
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier
+                                    .fillMaxWidth()
                             )
 
                             DropdownMenu(
                                 expanded = showDropdown && predictions.isNotEmpty(),
-                                onDismissRequest = { showDropdown = false }
+                                onDismissRequest = { showDropdown = false },
+                                modifier = Modifier.fillMaxWidth(),
+                                properties = PopupProperties(focusable = false)
                             ) {
                                 predictions.forEach { prediction ->
                                     DropdownMenuItem(
