@@ -1,9 +1,11 @@
 package com.example.tripwise.ui.screens
 
+import com.example.tripwise.ui.viewmodel.addlocation.AddLocationViewModel
 import android.util.Log
 import androidx.compose.ui.platform.LocalContext
 import com.example.tripwise.ui.viewmodel.addedit.ValidationState
 import android.widget.Toast
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -16,6 +18,7 @@ import androidx.compose.ui.Modifier
 import com.example.tripwise.ui.viewmodel.addedit.ExpenseEvent
 import com.example.tripwise.ui.common.InputField
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tripwise.data.Expense
 import com.example.tripwise.data.FirestoreRepository
@@ -30,6 +33,7 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
                          onSubmit: () -> Unit,
                          tripId: String,
                          expenseId: String? = null,
+                         addLocationViewModel: AddLocationViewModel = hiltViewModel(),
 ) {
     Log.d("Edit Expenses", "Edit mode $editMode")
     val context = LocalContext.current
@@ -38,6 +42,12 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
     var editableExpense by remember { mutableStateOf<Expense?>(null) }
     val user = FirebaseAuth.getInstance().currentUser
 
+    var addressQuery by remember { mutableStateOf("") }
+    var showDropdown by remember { mutableStateOf(false) }
+    val predictions by addLocationViewModel.predictions.collectAsState()
+    val selectedPlaceCoordinates by addLocationViewModel.selectedPlaceCoordinates.collectAsState()
+    val selectedPlaceAddress by addLocationViewModel.selectedPlaceAddress.collectAsState()
+
     LaunchedEffect(user) {
         user?.let {
             try {
@@ -45,6 +55,7 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
                     editableExpense = firestoreRepository.getExpense(it.uid, tripId, expenseId)
                     editableExpense?.let { expense ->
                         addEditExpenseViewModel.onPrefill(expense)
+                        addLocationViewModel.fetchPlace(expense.placeId)
                     }
                     Log.d("Expense Filled", "Prefilled expense $editableExpense")
                     Log.d("EditExpenseScreen", "Fetched expense: $editableExpense")
@@ -67,6 +78,22 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
                 }
                 else -> {}
             }
+        }
+    }
+
+    // Observe changes to selectedPlaceCoordinates
+    LaunchedEffect(selectedPlaceCoordinates) {
+        if (selectedPlaceCoordinates != Pair(0.0, 0.0)) {
+            addEditExpenseViewModel.onAction(
+                ExpenseEvent.LocationSubmitted(selectedPlaceCoordinates)
+            )
+        }
+    }
+
+    // Observe changes to selectedPlaceCoordinates
+    LaunchedEffect(selectedPlaceAddress) {
+        if (selectedPlaceAddress != "") {
+            addressQuery = selectedPlaceAddress
         }
     }
 
@@ -118,6 +145,41 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
                             value = editableExpense?.currency ?: ""
                         )
 
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            TextField(
+                                value = addressQuery,
+                                onValueChange = {
+                                    addressQuery = it
+                                    addLocationViewModel.fetchAutocompletePredictions(it)
+                                    showDropdown = it.isNotEmpty()
+                                },
+                                label = { Text("Address") },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            )
+
+                            DropdownMenu(
+                                expanded = showDropdown && predictions.isNotEmpty(),
+                                onDismissRequest = { showDropdown = false },
+                                modifier = Modifier.fillMaxWidth(),
+                                properties = PopupProperties(focusable = false)
+                            ) {
+                                predictions.forEach { prediction ->
+                                    DropdownMenuItem(
+                                        onClick = {
+                                            addressQuery = prediction.getPrimaryText(null).toString()
+                                            showDropdown = false
+                                            addLocationViewModel.fetchPlace(prediction.placeId)
+                                            addEditExpenseViewModel.onAction(
+                                                ExpenseEvent.PlaceIdSubmitted(prediction.placeId)
+                                            )
+                                        },
+                                        text = { Text(prediction.getPrimaryText(null).toString()) }
+                                    )
+                                }
+                            }
+                        }
+
                         InputField(
                             onValueChanged = { addEditExpenseViewModel.onAction(ExpenseEvent.DateChanged(it)) },
                             label = "Date (YYYY-MM-DD)",
@@ -129,7 +191,7 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
                         OutlinedButton(
                             onClick = {
                                 user?.let { user ->
-                                    if (editMode && tripId != null && expenseId != null) {
+                                    if (editMode && expenseId != null) {
                                         addEditExpenseViewModel.updateExpense(user.uid, tripId, expenseId)
                                     } else {
                                         addEditExpenseViewModel.submitExpense(user.uid, tripId)

@@ -2,6 +2,8 @@ package com.example.tripwise.ui.viewmodel.addedit
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.google.android.libraries.mapsplatform.transportation.consumer.model.Location
+import com.google.type.LatLng
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -23,6 +25,12 @@ object FormValidator {
         return currency.isNotEmpty() && currency.length == 3
     }
 
+    fun validateLocation(lat: Double, lng: Double): Boolean {
+        // Not default LatLng, which is set at Null Island (middle of ocean)
+        return lat != 0.0 && lng != 0.0
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     fun validateDates(startDate: String, endDate: String): Boolean {
         return try {
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -41,4 +49,5 @@ data class FormValidationResult(
     val datesStatus: Boolean = false,
     val amountStatus: Boolean = false,
     val currencyStatus: Boolean = false,
+    val locationStatus: Boolean = false,
 )

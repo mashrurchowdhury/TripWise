@@ -1,11 +1,14 @@
 package com.example.tripwise.injection
 
 import android.content.Context
+import com.example.tripwise.BuildConfig
 import com.example.tripwise.R
 import com.example.tripwise.data.FirestoreRepository
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -46,5 +49,17 @@ object TripWiseModule {
     @Singleton
     fun provideFirestoreRepository(): FirestoreRepository {
         return FirestoreRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun providePlacesClient(@ApplicationContext applicationContext: Context): PlacesClient {
+        // Initialize Places API if not already initialized
+        if (!Places.isInitialized()) {
+            Places.initialize(applicationContext, BuildConfig.MAPS_API_KEY)
+        }
+
+        // Return the PlacesClient
+        return Places.createClient(applicationContext)
     }
 }
