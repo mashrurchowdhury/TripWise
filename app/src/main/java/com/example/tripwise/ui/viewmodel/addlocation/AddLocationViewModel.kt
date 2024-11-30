@@ -26,6 +26,9 @@ class AddLocationViewModel @Inject constructor(
     private val _selectedPlaceCoordinates = MutableStateFlow<Pair<Double, Double>>(Pair(0.0, 0.0))
     val selectedPlaceCoordinates: StateFlow<Pair<Double, Double>> = _selectedPlaceCoordinates
 
+    private val _selectedPlaceAddress = MutableStateFlow<String>("")
+    val selectedPlaceAddress: StateFlow<String> = _selectedPlaceAddress
+
     /**
      * Fetch autocomplete predictions for the given query.
      */
@@ -52,33 +55,31 @@ class AddLocationViewModel @Inject constructor(
     /**
      * Fetch the lat/lng coordinates of the selected place.
      */
-    fun fetchPlaceCoordinates(placeId: String) {
+    fun fetchPlace(placeId: String) {
         viewModelScope.launch {
             try {
-                val location = fetchPlaceCoordinatesSuspend(placeId)
-                if (location != null) {
-                    _selectedPlaceCoordinates.value = Pair(location.latitude, location.longitude)
-                } else {
-                    _selectedPlaceCoordinates.value = Pair(0.0, 0.0) // Handle no location case
+                val place = fetchPlaceSuspend(placeId)
+                if (place.location != null) {
+                    _selectedPlaceCoordinates.value = place.location?.let { Pair(it.latitude, it.longitude) }!!
+                    _selectedPlaceAddress.value = place.formattedAddress ?: ""
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _selectedPlaceCoordinates.value = Pair(0.0, 0.0) // Handle error case
             }
         }
     }
 
-    private suspend fun fetchPlaceCoordinatesSuspend(placeId: String): LatLng? {
+    private suspend fun fetchPlaceSuspend(placeId: String): Place {
         return suspendCancellableCoroutine { continuation ->
             val request = FetchPlaceRequest.newInstance(
                 placeId,
-                listOf(Place.Field.LAT_LNG)
+                listOf(Place.Field.LAT_LNG, Place.Field.FORMATTED_ADDRESS)
             )
 
             placesClient.fetchPlace(request)
                 .addOnSuccessListener { response ->
-                    val location = response.place.location
-                    continuation.resumeWith(Result.success(location))
+                    val place = response.place
+                    continuation.resumeWith(Result.success(place))
                 }
                 .addOnFailureListener { exception ->
                     continuation.resumeWith(Result.failure(exception))

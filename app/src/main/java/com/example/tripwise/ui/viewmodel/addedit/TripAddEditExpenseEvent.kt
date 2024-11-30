@@ -8,5 +8,6 @@ sealed class ExpenseEvent {
     data class CurrencyChanged(val currency: String) : ExpenseEvent()
     data class DateChanged(val date: String) : ExpenseEvent()      // Assuming a string for date input
     data class LocationSubmitted(val location: Pair<Double, Double>): ExpenseEvent()
+    data class PlaceIdSubmitted(val placeId: String) : ExpenseEvent()
     data object Submit : ExpenseEvent()                                 // For submitting the form
 }

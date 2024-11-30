@@ -12,6 +12,7 @@ import com.google.type.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import java.text.Normalizer.Form
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,6 +57,12 @@ class AddEditExpenseViewModel @Inject constructor(
                 _expenseState.value = _expenseState.value.copy(
                     lat = expenseEvent.location.first,
                     lng = expenseEvent.location.second
+                )
+            }
+
+            is ExpenseEvent.PlaceIdSubmitted -> {
+                _expenseState.value = _expenseState.value.copy(
+                    placeId = expenseEvent.placeId
                 )
             }
 

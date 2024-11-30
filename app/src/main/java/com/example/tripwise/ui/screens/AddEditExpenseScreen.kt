@@ -46,6 +46,7 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
     var showDropdown by remember { mutableStateOf(false) }
     val predictions by addLocationViewModel.predictions.collectAsState()
     val selectedPlaceCoordinates by addLocationViewModel.selectedPlaceCoordinates.collectAsState()
+    val selectedPlaceAddress by addLocationViewModel.selectedPlaceAddress.collectAsState()
 
     LaunchedEffect(user) {
         user?.let {
@@ -54,6 +55,7 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
                     editableExpense = firestoreRepository.getExpense(it.uid, tripId, expenseId)
                     editableExpense?.let { expense ->
                         addEditExpenseViewModel.onPrefill(expense)
+                        addLocationViewModel.fetchPlace(expense.placeId)
                     }
                     Log.d("Expense Filled", "Prefilled expense $editableExpense")
                     Log.d("EditExpenseScreen", "Fetched expense: $editableExpense")
@@ -85,6 +87,13 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
             addEditExpenseViewModel.onAction(
                 ExpenseEvent.LocationSubmitted(selectedPlaceCoordinates)
             )
+        }
+    }
+
+    // Observe changes to selectedPlaceCoordinates
+    LaunchedEffect(selectedPlaceAddress) {
+        if (selectedPlaceAddress != "") {
+            addressQuery = selectedPlaceAddress
         }
     }
 
@@ -160,7 +169,10 @@ fun AddEditExpenseScreen(addEditExpenseViewModel: AddEditExpenseViewModel = hilt
                                         onClick = {
                                             addressQuery = prediction.getPrimaryText(null).toString()
                                             showDropdown = false
-                                            addLocationViewModel.fetchPlaceCoordinates(prediction.placeId)
+                                            addLocationViewModel.fetchPlace(prediction.placeId)
+                                            addEditExpenseViewModel.onAction(
+                                                ExpenseEvent.PlaceIdSubmitted(prediction.placeId)
+                                            )
                                         },
                                         text = { Text(prediction.getPrimaryText(null).toString()) }
                                     )

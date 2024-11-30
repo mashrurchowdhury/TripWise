@@ -8,6 +8,7 @@ data class Expense(
     val convertedCost: Double? = null,
     val lat: Double = 0.0,
     val lng: Double = 0.0,
+    val placeId: String = "",
     val date: String = "",
 )
 
