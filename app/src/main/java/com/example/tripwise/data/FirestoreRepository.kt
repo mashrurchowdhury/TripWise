@@ -8,7 +8,7 @@ import kotlinx.coroutines.tasks.await
 import com.google.firebase.auth.FirebaseAuth
 
 data class Settings(
-    var name: String = "",
+    val name: String = "",
     val homeCurrency: String = ""
 )
 
