@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import java.text.Normalizer.Form
 import javax.inject.Inject
+import java.util.Currency
 
 @HiltViewModel
 class AddEditExpenseViewModel @Inject constructor(
@@ -40,10 +41,15 @@ class AddEditExpenseViewModel @Inject constructor(
                     )
                 }
             }
+            is ExpenseEvent.CategoryChanged -> { // category change
+                _expenseState.value = _expenseState.value.copy(
+                    category = expenseEvent.category
+                )
+            }
 
             is ExpenseEvent.CurrencyChanged -> {
                 _expenseState.value = _expenseState.value.copy(
-                    currency = expenseEvent.currency
+                    currency = expenseEvent.currency.toString()
                 )
             }
 
