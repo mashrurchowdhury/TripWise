@@ -152,6 +152,8 @@ dependencies {
     implementation(libs.maps.compose.utils)
     // Google Maps Compose widgets library
     implementation(libs.maps.compose.widgets)
+    // Google Places API for Address Autocomplete
+    implementation(libs.places)
 }
 
 secrets {

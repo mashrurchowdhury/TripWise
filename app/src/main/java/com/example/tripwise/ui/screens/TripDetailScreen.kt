@@ -15,11 +15,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.tripwise.data.Expense
 import com.example.tripwise.data.FirestoreRepository
 import com.example.tripwise.ui.components.ExpenseListItem
 import com.example.tripwise.ui.components.ProgressBar
+import com.example.tripwise.ui.viewmodel.map.MapViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,7 +34,8 @@ fun TripDetailScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     onBackClick: () -> Unit,
-    tripId: String
+    tripId: String,
+    mapViewModel: MapViewModel,
 ) {
     val firestoreRepository = FirestoreRepository()
     val user = FirebaseAuth.getInstance().currentUser
@@ -49,6 +56,9 @@ fun TripDetailScreen(
                 tripName = firestoreRepository.getTrip(it.uid, tripId)?.name ?: "Trip Expenses"
 
                 Log.d("TripDetailScreen", "Fetched expenses: $expenses")
+                mapViewModel.fetchExpensesWithLocations(tripId)
+
+                Log.d("DashboardScreen", "Fetched expenses: $expenses")
             } catch (e: Exception) {
                 Log.e("TripDetailScreen", "Error fetching expenses", e)
             }

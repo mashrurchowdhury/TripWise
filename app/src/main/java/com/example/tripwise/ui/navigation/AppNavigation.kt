@@ -26,13 +26,15 @@ import MapScreen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
+import com.example.tripwise.ui.viewmodel.map.MapViewModel
 
 @Composable
 fun AppNavigation(
     navController: NavHostController,
     googleSignInClient: GoogleSignInClient,
     modifier: Modifier = Modifier,
-    signInViewModel: SignInViewModel = hiltViewModel()
+    signInViewModel: SignInViewModel = hiltViewModel(),
+    mapViewModel: MapViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val loginState = signInViewModel.loginState.collectAsState(initial = LoginState.Initial).value
@@ -98,7 +100,8 @@ fun AppNavigation(
                 DashboardScreen(
                     modifier = modifier,
                     signInViewModel = signInViewModel,
-                    navController = navController
+                    navController = navController,
+                    mapViewModel = mapViewModel,
                 )
             }
             composable("details?tripId={tripId}", arguments = listOf(
@@ -123,6 +126,7 @@ fun AppNavigation(
                         // Go to previous screen
                         navController.navigateUp()
                     },
+                    mapViewModel = mapViewModel,
                 )
             }
             composable(
@@ -193,7 +197,8 @@ fun AppNavigation(
                 route = "maps"
             ) {
                 MapScreen(
-                    modifier = modifier.padding(bottom = 40.dp)
+                    modifier = modifier.padding(bottom = 40.dp),
+                    mapViewModel = mapViewModel
                 )
             }
         }
