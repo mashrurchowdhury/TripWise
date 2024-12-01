@@ -11,6 +11,3 @@ data class Expense(
     val placeId: String = "",
     val date: String = "",
 )
-
-
-

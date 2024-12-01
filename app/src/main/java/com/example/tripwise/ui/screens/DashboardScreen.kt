@@ -20,12 +20,14 @@ import androidx.compose.material3.*
 import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
 import androidx.compose.material3.Scaffold
 import androidx.navigation.NavHostController
+import com.example.tripwise.ui.viewmodel.map.MapViewModel
 
 @Composable
 fun DashboardScreen(
     modifier: Modifier,
     navController: NavHostController,
-    signInViewModel: SignInViewModel
+    signInViewModel: SignInViewModel,
+    mapViewModel: MapViewModel,
 ) {
     val userFirstName = signInViewModel.getCurrentUser()?.displayName?.split(" ")?.get(0);
     val firestoreRepository = FirestoreRepository()
@@ -39,6 +41,8 @@ fun DashboardScreen(
             } catch (e: Exception) {
                 Log.e("DashboardScreen", "Error fetching trips", e)
             }
+
+            mapViewModel.fetchExpensesWithLocations()
         }
     }
 
