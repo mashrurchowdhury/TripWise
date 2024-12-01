@@ -42,7 +42,7 @@ fun TripDetailScreen(
     LaunchedEffect(navController.currentBackStackEntry) {
         user?.let {
             try {
-                expenses = firestoreRepository.getExpenses(it.uid, tripId)
+                expenses = firestoreRepository.getExpenses(it.uid, tripId).sortedByDescending { expense -> expense.date } // Sort trips by date descending
                 expenseTotal = expenses.sumOf{ expense -> expense.convertedCost ?: 0.0 }
                 budget = firestoreRepository.getTrip(it.uid, tripId)?.budget ?: 0.0
                 homeCurrency = firestoreRepository.getUserSettings()?.homeCurrency ?: "CAD"
