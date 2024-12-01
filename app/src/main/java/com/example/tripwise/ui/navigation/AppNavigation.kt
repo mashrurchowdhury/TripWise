@@ -186,6 +186,7 @@ fun AppNavigation(
             ) {
                 SettingsScreen(
                     modifier = modifier.padding(bottom = 40.dp),
+                    navController = navController,
                     signInViewModel = signInViewModel
                 )
             }

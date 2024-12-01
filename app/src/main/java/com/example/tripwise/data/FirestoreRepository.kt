@@ -8,7 +8,7 @@ import kotlinx.coroutines.tasks.await
 import com.google.firebase.auth.FirebaseAuth
 
 data class Settings(
-    val name: String = "",
+    var name: String = "",
     val homeCurrency: String = ""
 )
 
@@ -119,13 +119,17 @@ class FirestoreRepository {
 
     suspend fun updateUserSettings(settings: Settings) {
         val uid = auth.currentUser?.uid ?: throw Exception("User not authenticated")
-        val settingsRef = db.collection("users").document(uid)
-        settingsRef.set(settings, SetOptions.merge()).await()
+        val userRef = db.collection("users").document(uid)
+
+        userRef.set(settings, SetOptions.merge()).await()
     }
 
     suspend fun getUserSettings(): Settings? {
         val uid = auth.currentUser?.uid ?: throw Exception("User not authenticated")
-        val settingsRef = db.collection("users").document(uid)
-        return settingsRef.get().await()?.toObject(Settings::class.java)
+        val userRef = db.collection("users").document(uid)
+
+        val settings = userRef.get().await()?.toObject(Settings::class.java)
+
+        return settings
     }
 }
