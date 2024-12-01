@@ -12,6 +12,4 @@ data class Expense(
     val lng: Double = 0.0,
     val placeId: String = "",
     val date: String = "",
-    val latitude: Double? = null,    // Nullable, as it might not be set initially
-    val longitude: Double? = null
 )
