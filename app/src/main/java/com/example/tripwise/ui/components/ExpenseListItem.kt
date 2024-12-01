@@ -63,16 +63,8 @@ fun ExpenseListItem(
             Text(
                 text = displayCost,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary,
+                color = Color.DarkGray,
                 modifier = Modifier.padding(end = 8.dp)
-            )
-            Text(
-                text = expense.currency,
-                style = MaterialTheme.typography.labelMedium,
-            )
-            Text(
-                text = expense.category,
-                style = MaterialTheme.typography.labelMedium,
             )
 
             IconButton(

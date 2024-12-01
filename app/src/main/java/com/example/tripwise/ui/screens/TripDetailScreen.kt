@@ -119,12 +119,6 @@ fun TripDetailScreen(
                 // Progress Bar with Gradient
                 if (budget > 0.0) {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "${String.format("%.2f", expenseTotal)} / ${String.format("%.2f", budget)}",
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
-                        )
                         ProgressBar(
                             currentAmount = expenseTotal,
                             totalAmount = budget
