@@ -49,7 +49,7 @@ class AddEditExpenseViewModel @Inject constructor(
 
             is ExpenseEvent.CurrencyChanged -> {
                 _expenseState.value = _expenseState.value.copy(
-                    currency = expenseEvent.currency
+                    currency = expenseEvent.currency.toString()
                 )
             }
 

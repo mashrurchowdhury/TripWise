@@ -84,6 +84,7 @@ fun TripDetailScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
+                modifier = Modifier.padding(bottom = 64.dp),
                 onClick = {
                     navController.navigate("add-edit-expense?editMode=false&tripId=$tripId")
                 }
