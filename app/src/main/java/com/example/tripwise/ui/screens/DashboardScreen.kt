@@ -35,7 +35,7 @@ fun DashboardScreen(
     LaunchedEffect(navController.currentBackStackEntry) {
         signInViewModel.getCurrentUser()?.let {
             try {
-                trips = firestoreRepository.getTrips(it.uid)
+                trips = firestoreRepository.getTrips(it.uid).sortedByDescending { trip -> trip.endDate } // Sort trips by date descending
                 Log.d("DashboardScreen", "Fetched trips: $trips")
             } catch (e: Exception) {
                 Log.e("DashboardScreen", "Error fetching trips", e)
