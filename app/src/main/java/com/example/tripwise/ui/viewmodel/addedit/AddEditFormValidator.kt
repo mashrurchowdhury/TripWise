@@ -49,5 +49,6 @@ data class FormValidationResult(
     val datesStatus: Boolean = false,
     val amountStatus: Boolean = false,
     val currencyStatus: Boolean = false,
+    val categoryStatus: Boolean = false,
     val locationStatus: Boolean = false,
 )

@@ -131,6 +131,7 @@ fun AddEditExpenseScreen(
                             // Category Dropdown
                             val categories =
                                     listOf(
+                                            "",
                                             "Accommodation",
                                             "Entertainment",
                                             "Food & Dining",
@@ -139,14 +140,22 @@ fun AddEditExpenseScreen(
                                             "Transportation",
                                             "Miscellaneous"
                                     )
-                            var selectedCategory by remember { mutableStateOf(categories[0]) }
+
+                            var selectedCategory by remember {
+                                mutableStateOf(
+                                    editableExpense?.category?.takeIf { it.isNotEmpty() } ?: categories[0]
+                                )
+                            }
 
                             CategoryDropdown(
                                     selectedItem = selectedCategory,
-                                    onItemSelected = { selectedCategory = it },
+                                    onItemSelected = { 
+                                        selectedCategory = it
+                                        addEditExpenseViewModel.onAction(ExpenseEvent.CategoryChanged(it))
+                                    },
                                     items = categories,
                                     label = "Category",
-                                    itemToString = { it } // For String, just return the item itself
+                                    itemToString = { it },
                             )
 
                             InputField(
@@ -157,21 +166,13 @@ fun AddEditExpenseScreen(
                                     },
                                     label = "Amount",
                                     isError = addEditExpenseViewModel.errorState.value.amountStatus,
-                                    error = "Please enter a valid amount"
+                                    error = "Please enter a valid amount",
+                                    value = editableExpense?.cost?.toString() ?: "",
                             )
-
-                            //                    //TODO: Change to a drop down field
-                            //                    InputField(
-                            //                        label = "Currency",
-                            //                        onValueChanged = {
-                            // addEditExpenseViewModel.onAction(ExpenseEvent.CurrencyChanged(it)) },
-                            //                        isError =
-                            // addEditExpenseViewModel.errorState.value.currencyStatus,
-                            //                        error = "Please enter a valid currency"
-                            //                    )
 
                             val currencies =
                                     listOf(
+                                            "",
                                             Currency.getInstance("USD"),
                                             Currency.getInstance("CAD"),
                                             Currency.getInstance("EUR"),
@@ -179,19 +180,24 @@ fun AddEditExpenseScreen(
                                             Currency.getInstance("CNY"),
                                             Currency.getInstance("JPY"),
                                     )
-                            var selectedCurrency by remember { mutableStateOf(currencies[0]) }
+
+                            var selectedCurrency by remember {
+                                mutableStateOf(
+                                    editableExpense?.currency?.let { Currency.getInstance(it) } ?: currencies[0]
+                                )
+                            }
 
                             CategoryDropdown(
                                     selectedItem = selectedCurrency,
                                     onItemSelected = { 
                                         selectedCurrency = it
-                                        addEditExpenseViewModel.onAction(ExpenseEvent.CurrencyChanged(it)) 
+                                        addEditExpenseViewModel.onAction(ExpenseEvent.CurrencyChanged(it.toString()))
                                     },
                                     items = currencies,
                                     label = "Currency",
                                     itemToString = {
-                                        it.currencyCode
-                                    } // Convert Currency to its code (e.g., "USD")
+                                        if (it is Currency) it.currencyCode else it.toString()
+                                    } // Convert Currency to its code or use the string itself
                             )
                             Column(modifier = Modifier.padding(16.dp)) {
                                 TextField(
@@ -272,7 +278,9 @@ fun AddEditExpenseScreen(
                                                             top = 10.dp,
                                                             end = 50.dp
                                                     ),
-                            ) { Text("Submit Expense") }
+                        ) { 
+                            Text(if (editMode) "Update Expense" else "Submit Expense") 
+                        }
 
                             if (editMode && expenseId != null) {
                                 OutlinedButton(
