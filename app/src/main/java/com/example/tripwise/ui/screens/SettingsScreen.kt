@@ -126,8 +126,13 @@ fun SettingsScreen(
                     )
                     coroutineScope.launch {
                         try {
+                            val previousCurrency = firestoreRepository.getUserSettings()?.homeCurrency
+
                             firestoreRepository.updateUserSettings(settings)
                             signInViewModel.updateUserInformation(settings.name)
+
+                            firestoreRepository.updateTripBudgetsExpenseAmounts(previousCurrency, settings.homeCurrency)
+
                             Toast.makeText(context, "Settings updated successfully", Toast.LENGTH_SHORT).show()
                         } catch (e: Exception) {
                             Log.e("SettingsScreen", "Error updating settings", e)
