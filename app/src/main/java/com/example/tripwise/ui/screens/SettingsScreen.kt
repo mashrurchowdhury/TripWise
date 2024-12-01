@@ -20,26 +20,28 @@ import com.example.tripwise.data.FirestoreRepository
 import com.example.tripwise.data.Settings
 import kotlinx.coroutines.launch
 import android.util.Log
+import androidx.navigation.NavHostController
 import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
 
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     firestoreRepository: FirestoreRepository = FirestoreRepository(),
+    navController: NavHostController,
     signInViewModel: SignInViewModel
 ) {
-    var name by remember { mutableStateOf(TextFieldValue("")) }
-    var homeCurrency by remember { mutableStateOf(TextFieldValue("")) }
+    var name by remember { mutableStateOf("") }
+    var homeCurrency by remember { mutableStateOf("") }
     val profilePic: Painter = painterResource(id = R.drawable.placeholder_profile)
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(navController.currentBackStackEntry) {
         try {
             val settings = firestoreRepository.getUserSettings()
             settings?.let {
-                name = TextFieldValue(it.name)
-                homeCurrency = TextFieldValue(it.homeCurrency)
+                name = it.name
+                homeCurrency = it.homeCurrency
             }
         } catch (e: Exception) {
             Log.e("SettingsScreen", "Error fetching user settings", e)
@@ -119,8 +121,8 @@ fun SettingsScreen(
             Button(
                 onClick = {
                     val settings = Settings(
-                        name = name.text,
-                        homeCurrency = homeCurrency.text
+                        name = name,
+                        homeCurrency = homeCurrency
                     )
                     coroutineScope.launch {
                         try {
