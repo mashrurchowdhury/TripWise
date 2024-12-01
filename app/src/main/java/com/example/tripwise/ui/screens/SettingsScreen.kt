@@ -102,29 +102,39 @@ fun SettingsScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Save Button
-        Button(
-            onClick = {
-                val settings = Settings(
-                    name = name.text,
-                    homeCurrency = homeCurrency.text
-                )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Sign Out Button
+            Button(
+                onClick = {
+                    signInViewModel.signOut()
+                }
+            ) {
+                Text("Sign Out")
+            }
 
-                coroutineScope.launch {
-                    try {
-                        firestoreRepository.updateUserSettings(settings)
-                        signInViewModel.updateUserInformation(settings.name)
-                        // Show success toast
-                        Toast.makeText(context, "Settings updated successfully", Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
-                        // Handle error (e.g., show a toast)
-                        Log.e("SettingsScreen", "Error updating settings", e)
+            // Save Button
+            Button(
+                onClick = {
+                    val settings = Settings(
+                        name = name.text,
+                        homeCurrency = homeCurrency.text
+                    )
+                    coroutineScope.launch {
+                        try {
+                            firestoreRepository.updateUserSettings(settings)
+                            signInViewModel.updateUserInformation(settings.name)
+                            Toast.makeText(context, "Settings updated successfully", Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            Log.e("SettingsScreen", "Error updating settings", e)
+                        }
                     }
                 }
-            },
-            modifier = Modifier.align(Alignment.End)
-        ) {
-            Text("Save")
+            ) {
+                Text("Save")
+            }
         }
     }
 }
