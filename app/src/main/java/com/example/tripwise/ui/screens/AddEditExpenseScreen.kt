@@ -20,6 +20,7 @@ import com.example.tripwise.data.Expense
 import com.example.tripwise.data.FirestoreRepository
 import com.example.tripwise.ui.common.CategoryDropdown
 import com.example.tripwise.ui.common.InputField
+import com.example.tripwise.ui.components.DatePickerField
 import com.example.tripwise.ui.viewmodel.addedit.AddEditExpenseViewModel
 import com.example.tripwise.ui.viewmodel.addedit.ExpenseEvent
 import com.example.tripwise.ui.viewmodel.addedit.ValidationState
@@ -44,6 +45,7 @@ fun AddEditExpenseScreen(
 
     var editableExpense by remember { mutableStateOf<Expense?>(null) }
     val user = FirebaseAuth.getInstance().currentUser
+    val expenseState by addEditExpenseViewModel._expenseState
 
     var addressQuery by remember { mutableStateOf("") }
     var showDropdown by remember { mutableStateOf(false) }
@@ -242,16 +244,12 @@ fun AddEditExpenseScreen(
                                 }
                             }
 
-                            InputField(
-                                    onValueChanged = {
-                                        addEditExpenseViewModel.onAction(
-                                                ExpenseEvent.DateChanged(it)
-                                        )
-                                    },
-                                    label = "Date (YYYY-MM-DD)",
-                                    isError = addEditExpenseViewModel.errorState.value.datesStatus,
-                                    error = "Please enter a valid date",
-                                    value = editableExpense?.date ?: "",
+                            DatePickerField(
+                                label = "Date",
+                                selectedDate = expenseState.date,
+                                onDateSelected = {
+                                    addEditExpenseViewModel.onAction(ExpenseEvent.DateChanged(it))
+                                }
                             )
 
                             OutlinedButton(

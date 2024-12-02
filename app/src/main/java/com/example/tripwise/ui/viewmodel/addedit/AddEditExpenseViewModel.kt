@@ -22,7 +22,7 @@ class AddEditExpenseViewModel @Inject constructor(
     private val firestoreRepository: FirestoreRepository,
     private val currencyConverter: CurrencyConverter 
 ) : ViewModel() {
-    private var _expenseState = mutableStateOf(Expense())
+    var _expenseState = mutableStateOf(Expense())
     private var _errorState = mutableStateOf(FormValidationResult())
     val errorState: State<FormValidationResult> = _errorState
     val validationEvent = MutableSharedFlow<ValidationState>()
