@@ -9,11 +9,13 @@ import com.example.tripwise.data.CurrencyConverter
 import com.example.tripwise.data.Expense
 import com.example.tripwise.data.FirestoreRepository
 import com.google.type.LatLng
+import com.google.android.play.integrity.internal.c
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import java.text.Normalizer.Form
 import javax.inject.Inject
+import java.util.Currency
 
 @HiltViewModel
 class AddEditExpenseViewModel @Inject constructor(
@@ -39,6 +41,11 @@ class AddEditExpenseViewModel @Inject constructor(
                         cost = expenseEvent.amount.toDouble()
                     )
                 }
+            }
+            is ExpenseEvent.CategoryChanged -> {
+                _expenseState.value = _expenseState.value.copy(
+                    category = expenseEvent.category
+                )
             }
 
             is ExpenseEvent.CurrencyChanged -> {
@@ -76,11 +83,12 @@ class AddEditExpenseViewModel @Inject constructor(
         _expenseState.value = expense
     }
 
-    private var hasError: Boolean = false
+    var hasError: Boolean = true
 
     private fun validateExpense() {
         val isNameValid = FormValidator.validateName(_expenseState.value.name)
         val isAmountValid = FormValidator.validateAmount(_expenseState.value.cost)
+        val isCategoryValid = _expenseState.value.category.isNotEmpty()
         val isCurrencyValid = FormValidator.validateCurrency(_expenseState.value.currency)
         val isLocationValid = FormValidator.validateLocation(_expenseState.value.lat, _expenseState.value.lng)
 
@@ -88,6 +96,7 @@ class AddEditExpenseViewModel @Inject constructor(
             nameStatus = !isNameValid,
             amountStatus = !isAmountValid,
             currencyStatus = !isCurrencyValid,
+            categoryStatus = !isCategoryValid,
             locationStatus = !isLocationValid
         )
 
@@ -95,16 +104,10 @@ class AddEditExpenseViewModel @Inject constructor(
                 !_errorState.value.nameStatus
                         && !_errorState.value.amountStatus
                         && !_errorState.value.currencyStatus
+                        && !_errorState.value.categoryStatus
                         && !_errorState.value.datesStatus
                         && !_errorState.value.locationStatus
                 )
-
-        viewModelScope.launch {
-            if (!hasError) {
-                validationEvent.emit(ValidationState.ExpenseSuccess(_expenseState.value))
-            }
-
-        }
     }
 
     fun submitExpense(uid: String, tripId: String) {

@@ -23,6 +23,7 @@ import com.example.tripwise.data.Settings
 import android.provider.Settings as AppSettings
 import kotlinx.coroutines.launch
 import android.util.Log
+import androidx.navigation.NavHostController
 import com.example.tripwise.data.isNotificationPermissionGranted
 import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
 
@@ -30,22 +31,23 @@ import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     firestoreRepository: FirestoreRepository = FirestoreRepository(),
+    navController: NavHostController,
     signInViewModel: SignInViewModel
 ) {
-    var name by remember { mutableStateOf(TextFieldValue("")) }
-    var homeCurrency by remember { mutableStateOf(TextFieldValue("")) }
+    var name by remember { mutableStateOf("") }
+    var homeCurrency by remember { mutableStateOf("") }
     val profilePic: Painter = painterResource(id = R.drawable.placeholder_profile)
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     var hasNotificationPermission by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(navController.currentBackStackEntry) {
         hasNotificationPermission = isNotificationPermissionGranted(context)
         try {
             val settings = firestoreRepository.getUserSettings()
             settings?.let {
-                name = TextFieldValue(it.name)
-                homeCurrency = TextFieldValue(it.homeCurrency)
+                name = it.name
+                homeCurrency = it.homeCurrency
             }
         } catch (e: Exception) {
             Log.e("SettingsScreen", "Error fetching user settings", e)
@@ -108,29 +110,44 @@ fun SettingsScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Save Button
-        Button(
-            onClick = {
-                val settings = Settings(
-                    name = name.text,
-                    homeCurrency = homeCurrency.text
-                )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Sign Out Button
+            Button(
+                onClick = {
+                    signInViewModel.signOut()
+                }
+            ) {
+                Text("Sign Out")
+            }
 
-                coroutineScope.launch {
-                    try {
-                        firestoreRepository.updateUserSettings(settings)
-                        signInViewModel.updateUserInformation(settings.name)
-                        // Show success toast
-                        Toast.makeText(context, "Settings updated successfully", Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
-                        // Handle error (e.g., show a toast)
-                        Log.e("SettingsScreen", "Error updating settings", e)
+            // Save Button
+            Button(
+                onClick = {
+                    val settings = Settings(
+                        name = name,
+                        homeCurrency = homeCurrency
+                    )
+                    coroutineScope.launch {
+                        try {
+                            val previousCurrency = firestoreRepository.getUserSettings()?.homeCurrency
+
+                            firestoreRepository.updateUserSettings(settings)
+                            signInViewModel.updateUserInformation(settings.name)
+
+                            firestoreRepository.updateTripBudgetsExpenseAmounts(previousCurrency, settings.homeCurrency)
+
+                            Toast.makeText(context, "Settings updated successfully", Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            Log.e("SettingsScreen", "Error updating settings", e)
+                        }
                     }
                 }
-            },
-            modifier = Modifier.align(Alignment.End)
-        ) {
-            Text("Save")
+            ) {
+                Text("Save")
+            }
         }
 
         Text(
