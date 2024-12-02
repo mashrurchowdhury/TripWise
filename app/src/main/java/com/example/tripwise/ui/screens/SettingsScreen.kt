@@ -1,3 +1,5 @@
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -18,8 +20,10 @@ import androidx.compose.ui.unit.sp
 import com.example.tripwise.R
 import com.example.tripwise.data.FirestoreRepository
 import com.example.tripwise.data.Settings
+import android.provider.Settings as AppSettings
 import kotlinx.coroutines.launch
 import android.util.Log
+import com.example.tripwise.data.isNotificationPermissionGranted
 import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
 
 @Composable
@@ -33,8 +37,10 @@ fun SettingsScreen(
     val profilePic: Painter = painterResource(id = R.drawable.placeholder_profile)
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    var hasNotificationPermission by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        hasNotificationPermission = isNotificationPermissionGranted(context)
         try {
             val settings = firestoreRepository.getUserSettings()
             settings?.let {
@@ -125,6 +131,41 @@ fun SettingsScreen(
             modifier = Modifier.align(Alignment.End)
         ) {
             Text("Save")
+        }
+
+        Text(
+            text = "Notifications",
+            fontSize = 18.sp,
+            color = Color.Gray
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        if (hasNotificationPermission) {
+            Text(
+                text = "Notifications are enabled",
+                fontSize = 16.sp,
+                color = Color.Blue
+            )
+        } else {
+            Column {
+                Text(
+                    text = "Notifications are disabled",
+                    fontSize = 16.sp,
+                    color = Color.Red
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Button(onClick = {
+                    // Navigate to app settings
+                    val intent = Intent(
+                        AppSettings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.fromParts("package", context.packageName, null)
+                    )
+                    context.startActivity(intent)
+                }) {
+                    Text("Enable Notifications")
+                }
+            }
         }
     }
 }
