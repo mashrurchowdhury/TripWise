@@ -75,8 +75,6 @@ fun SettingsScreen(
                 }
         )
 
-        Spacer(modifier = modifier.height(10.dp))
-
         // Name Field
         Text(
             text = "Name",
@@ -93,8 +91,6 @@ fun SettingsScreen(
             singleLine = true
         )
 
-        Spacer(modifier = modifier.height(10.dp))
-
         Text(
             text = "Home Currency",
             fontSize = 18.sp,
@@ -109,8 +105,6 @@ fun SettingsScreen(
                 .padding(vertical = 8.dp),
             singleLine = true
         )
-
-        Spacer(modifier = Modifier.height(20.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -176,14 +170,17 @@ fun SettingsScreen(
                     color = Color.Red
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Button(onClick = {
-                    // Navigate to app settings
-                    val intent = Intent(
-                        AppSettings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", context.packageName, null)
-                    )
-                    context.startActivity(intent)
-                }) {
+                Button(
+                    onClick = {
+                        // Navigate to app settings
+                        val intent = Intent(
+                            AppSettings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", context.packageName, null)
+                        )
+                        context.startActivity(intent)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = TripWiseGray)
+                ) {
                     Text("Enable Notifications")
                 }
             }
