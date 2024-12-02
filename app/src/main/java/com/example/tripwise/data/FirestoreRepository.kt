@@ -6,6 +6,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.tasks.await
 import com.google.firebase.auth.FirebaseAuth
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 data class Settings(
     val name: String = "",
@@ -15,6 +17,7 @@ data class Settings(
 class FirestoreRepository {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val currencyConverter = CurrencyConverter()
 
     //EXPENSE RELATED FUNCTIONS
 
@@ -131,5 +134,27 @@ class FirestoreRepository {
         val settings = userRef.get().await()?.toObject(Settings::class.java)
 
         return settings
+    }
+
+    suspend fun updateTripBudgetsExpenseAmounts(previousCurrency: String?, homeCurrency: String) {
+        val uid = auth.currentUser?.uid ?: throw Exception("User not authenticated")
+
+        if (previousCurrency == null) return
+
+        val trips = getTrips(uid)
+        for (trip in trips) {
+            val newBudget = currencyConverter.convertCurrency(trip.budget, previousCurrency, homeCurrency)
+            val updatedTrip = trip.copy(budget = BigDecimal(newBudget).setScale(2, RoundingMode.HALF_UP).toDouble())
+
+            addTrip(uid, updatedTrip)
+
+            val expenses = getExpenses(uid, trip.id)
+            for (expense in expenses) {
+                val newConvertedAmount = currencyConverter.convertCurrency(expense.cost, previousCurrency, homeCurrency)
+                val updatedExpense = expense.copy(convertedCost = BigDecimal(newConvertedAmount).setScale(2, RoundingMode.HALF_UP).toDouble())
+
+                addExpense(uid, trip.id, updatedExpense)
+            }
+        }
     }
 }
