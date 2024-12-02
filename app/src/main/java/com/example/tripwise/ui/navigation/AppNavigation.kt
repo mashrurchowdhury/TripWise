@@ -23,10 +23,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import android.util.Log
 import SettingsScreen
 import MapScreen
+import android.os.Build
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import com.example.tripwise.ui.viewmodel.map.MapViewModel
+import com.example.tripwise.data.isNotificationPermissionGranted
+import com.example.tripwise.data.scheduleNotifications
+import com.example.tripwise.ui.screens.NotificationPermissionScreen
 
 @Composable
 fun AppNavigation(
@@ -40,19 +44,30 @@ fun AppNavigation(
     val loginState = signInViewModel.loginState.collectAsState(initial = LoginState.Initial).value
     var bottomNavVisible by remember { mutableStateOf(false) }
 
+    LaunchedEffect(Unit) {
+        Log.d("NotificationScheduler", "Scheduling?")
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            isNotificationPermissionGranted(context)
+        ) {
+            Log.d("NotificationScheduler","Notifs should be scheduled")
+            scheduleNotifications(context)
+        }
+    }
+
     LaunchedEffect(loginState) {
         when (loginState) {
             is LoginState.Initial -> bottomNavVisible = false
             is LoginState.Loading -> {}
             is LoginState.CreateAccountSuccess -> {
-                navController.navigate("dashboard") { popUpTo("dashboard") }
+                navController.navigate("notification-permission")
                 bottomNavVisible = true
             }
             is LoginState.CreateAccountError -> {
                 Toast.makeText(context, "Error Creating Account, " + loginState.message, Toast.LENGTH_SHORT).show()
             }
             is LoginState.LoginSuccess -> {
-                navController.navigate("dashboard") { popUpTo("dashboard") }
+                navController.navigate("dashboard")
                 bottomNavVisible = true
             }
             is LoginState.LoginError -> {
@@ -82,6 +97,16 @@ fun AppNavigation(
                     googleSignInClient = googleSignInClient,
                     onEmailOptionClicked = { navController.navigate("email-password") },
                     signInViewModel = signInViewModel,
+                )
+            }
+            composable("notification-permission") {
+                NotificationPermissionScreen(
+                    onPermissionGranted = {
+                        // Navigate to the dashboard after permission is granted
+                        navController.navigate("dashboard") {
+                            popUpTo("dashboard") { inclusive = true }
+                        }
+                    }
                 )
             }
             composable("email-password") {
