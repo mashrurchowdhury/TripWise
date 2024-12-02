@@ -6,6 +6,8 @@ Android
 ## Single-sentence description
 TripWise is a travel expense management app designed to simplify trip planning, budgeting, and tracking expenses with a user-friendly interface.
 
+## Visual Preview
+
 ## Team members
 1. Mashrur Chowdhury (m35chowd@uwaterloo.ca)
 2. Ingrid Crant (i3crant@uwaterloo.ca)
@@ -36,3 +38,11 @@ Team 102-2
 | 0.30   | 15-Nov-2024   | [Version 0.30 Release](https://git.uwaterloo.ca/m35chowd/team102-2/-/wikis/releases/v0.30) | [Download APK](https://drive.google.com/file/d/1TjIZk7NmRkoewxqUipvVw3NRkeKJ_VX7/view?usp=sharing)
 | 0.40   | 02-Dec-2024   | [Version 0.40 Release](https://git.uwaterloo.ca/m35chowd/team102-2/-/wikis/releases/v0.40) | [Download APK](https://drive.google.com/file/d/1zbDDiZ0H3kvjgnLX_YpBDuWtsVZqQsx5/view?usp=sharing)
 
+## User Documentation
+[User Documentation](https://git.uwaterloo.ca/m35chowd/team102-2/-/wikis/User-Documentation)
+
+## Design Diagrams
+[Design Diagrams Document](https://git.uwaterloo.ca/m35chowd/team102-2/-/wikis/Design-Diagrams)
+
+## Project Reflections
+[Project Reflections Document](https://git.uwaterloo.ca/m35chowd/team102-2/-/wikis/Project-Reflections)
