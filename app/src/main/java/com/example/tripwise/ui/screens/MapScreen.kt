@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tripwise.data.Expense
+import com.example.tripwise.ui.theme.TripWiseGray
+import com.example.tripwise.ui.theme.TripWiseGreen
 import com.example.tripwise.ui.viewmodel.map.MapViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
@@ -50,11 +52,19 @@ fun MapScreen(
         modifier = modifier.fillMaxWidth(),
 //        cameraPositionState = cameraPositionState
     ) {
+        // Border polyline
         Polyline(
             points = expensesWithLocations.map { LatLng(it.lat, it.lng) },
             clickable = true,
-            color = Color.Blue,
-            width = 5f
+            color = TripWiseGreen,
+            width = 12f
+        )
+        // Main polyline
+        Polyline(
+            points = expensesWithLocations.map { LatLng(it.lat, it.lng) },
+            clickable = true,
+            color = TripWiseGray,
+            width = 10f
         )
     }
 }

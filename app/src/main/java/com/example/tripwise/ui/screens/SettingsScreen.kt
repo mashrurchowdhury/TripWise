@@ -25,6 +25,8 @@ import kotlinx.coroutines.launch
 import android.util.Log
 import androidx.navigation.NavHostController
 import com.example.tripwise.data.isNotificationPermissionGranted
+import com.example.tripwise.ui.theme.TripWiseGray
+import com.example.tripwise.ui.theme.TripWiseGreen
 import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
 
 @Composable
@@ -73,7 +75,7 @@ fun SettingsScreen(
                 }
         )
 
-        Spacer(modifier = modifier.height(20.dp))
+        Spacer(modifier = modifier.height(10.dp))
 
         // Name Field
         Text(
@@ -91,7 +93,7 @@ fun SettingsScreen(
             singleLine = true
         )
 
-        Spacer(modifier = modifier.height(20.dp))
+        Spacer(modifier = modifier.height(10.dp))
 
         Text(
             text = "Home Currency",
@@ -118,9 +120,10 @@ fun SettingsScreen(
             Button(
                 onClick = {
                     signInViewModel.signOut()
-                }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = TripWiseGreen)
             ) {
-                Text("Sign Out")
+                Text("Sign Out", color = TripWiseGray)
             }
 
             // Save Button
@@ -144,9 +147,10 @@ fun SettingsScreen(
                             Log.e("SettingsScreen", "Error updating settings", e)
                         }
                     }
-                }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = TripWiseGreen)
             ) {
-                Text("Save")
+                Text("Save", color = TripWiseGray)
             }
         }
 
