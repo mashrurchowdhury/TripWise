@@ -14,6 +14,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tripwise.data.Trip
+import com.example.tripwise.ui.theme.TripWiseGray
+import com.example.tripwise.ui.theme.TripWiseGreen
 
 @Composable
 fun TripListItem(
@@ -74,12 +76,11 @@ fun TripListItem(
                 onClick = onEditClick,
                 modifier = Modifier
                     .size(40.dp)
-                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(50))
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Edit",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    tint = TripWiseGray
                 )
             }
         }

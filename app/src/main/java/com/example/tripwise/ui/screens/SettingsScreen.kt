@@ -25,6 +25,8 @@ import kotlinx.coroutines.launch
 import android.util.Log
 import androidx.navigation.NavHostController
 import com.example.tripwise.data.isNotificationPermissionGranted
+import com.example.tripwise.ui.theme.TripWiseGray
+import com.example.tripwise.ui.theme.TripWiseGreen
 import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
 
 @Composable
@@ -73,8 +75,6 @@ fun SettingsScreen(
                 }
         )
 
-        Spacer(modifier = modifier.height(20.dp))
-
         // Name Field
         Text(
             text = "Name",
@@ -91,8 +91,6 @@ fun SettingsScreen(
             singleLine = true
         )
 
-        Spacer(modifier = modifier.height(20.dp))
-
         Text(
             text = "Home Currency",
             fontSize = 18.sp,
@@ -108,8 +106,6 @@ fun SettingsScreen(
             singleLine = true
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -118,9 +114,10 @@ fun SettingsScreen(
             Button(
                 onClick = {
                     signInViewModel.signOut()
-                }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = TripWiseGreen)
             ) {
-                Text("Sign Out")
+                Text("Sign Out", color = TripWiseGray)
             }
 
             // Save Button
@@ -144,9 +141,10 @@ fun SettingsScreen(
                             Log.e("SettingsScreen", "Error updating settings", e)
                         }
                     }
-                }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = TripWiseGreen)
             ) {
-                Text("Save")
+                Text("Save", color = TripWiseGray)
             }
         }
 
@@ -172,14 +170,17 @@ fun SettingsScreen(
                     color = Color.Red
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Button(onClick = {
-                    // Navigate to app settings
-                    val intent = Intent(
-                        AppSettings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                        Uri.fromParts("package", context.packageName, null)
-                    )
-                    context.startActivity(intent)
-                }) {
+                Button(
+                    onClick = {
+                        // Navigate to app settings
+                        val intent = Intent(
+                            AppSettings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", context.packageName, null)
+                        )
+                        context.startActivity(intent)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = TripWiseGray)
+                ) {
                     Text("Enable Notifications")
                 }
             }

@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
@@ -21,6 +22,8 @@ import com.example.tripwise.data.FirestoreRepository
 import com.example.tripwise.ui.common.CategoryDropdown
 import com.example.tripwise.ui.common.InputField
 import com.example.tripwise.ui.components.DatePickerField
+import com.example.tripwise.ui.theme.TripWiseGray
+import com.example.tripwise.ui.theme.TripWiseGreen
 import com.example.tripwise.ui.viewmodel.addedit.AddEditExpenseViewModel
 import com.example.tripwise.ui.viewmodel.addedit.ExpenseEvent
 import com.example.tripwise.ui.viewmodel.addedit.ValidationState
@@ -104,8 +107,16 @@ fun AddEditExpenseScreen(
 
     Scaffold(
             topBar = {
-                Button(onClick = { onBackClick() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Go to previous screen")
+                Button(
+                    onClick = { onBackClick() },
+                    modifier = Modifier.padding(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = TripWiseGreen)
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        "Go to previous screen",
+                        tint = TripWiseGray
+                    )
                 }
             },
             content = {
@@ -201,16 +212,15 @@ fun AddEditExpenseScreen(
                                         if (it is Currency) it.currencyCode else it.toString()
                                     } // Convert Currency to its code or use the string itself
                             )
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                TextField(
-                                        value = addressQuery,
-                                        onValueChange = {
-                                            addressQuery = it
-                                            addLocationViewModel.fetchAutocompletePredictions(it)
-                                            showDropdown = it.isNotEmpty()
-                                        },
-                                        label = { Text("Address") },
-                                        modifier = Modifier.fillMaxWidth()
+                            Column() {
+                                InputField(
+                                    onValueChanged = {
+                                        addressQuery = it
+                                        addLocationViewModel.fetchAutocompletePredictions(it)
+                                        showDropdown = it.isNotEmpty()
+                                    },
+                                    label = "Address",
+                                    value = addressQuery
                                 )
 
                                 DropdownMenu(
@@ -276,9 +286,13 @@ fun AddEditExpenseScreen(
                                                             top = 10.dp,
                                                             end = 50.dp
                                                     ),
-                        ) { 
-                            Text(if (editMode) "Update Expense" else "Submit Expense") 
-                        }
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                            containerColor = TripWiseGray,
+                                            contentColor = Color.White
+                                    )
+                            ) { 
+                                Text(if (editMode) "Update Expense" else "Submit Expense") 
+                            }
 
                             if (editMode && expenseId != null) {
                                 OutlinedButton(

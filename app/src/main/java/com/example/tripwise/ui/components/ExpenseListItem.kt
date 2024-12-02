@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
 import com.example.tripwise.data.Expense
+import com.example.tripwise.ui.theme.TripWiseGray
 
 @Composable
 fun ExpenseListItem(
@@ -33,7 +34,9 @@ fun ExpenseListItem(
             .padding(horizontal = 8.dp)
             .fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
     ) {
         Row(
             modifier = Modifier
@@ -74,7 +77,7 @@ fun ExpenseListItem(
                 Icon(
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Edit",
-                    tint = MaterialTheme.colorScheme.primary
+                    tint = TripWiseGray
                 )
             }
         }

@@ -25,6 +25,7 @@ import com.example.tripwise.data.Expense
 import com.example.tripwise.data.FirestoreRepository
 import com.example.tripwise.ui.components.ExpenseListItem
 import com.example.tripwise.ui.components.ProgressBar
+import com.example.tripwise.ui.theme.TripWiseGreen
 import com.example.tripwise.ui.viewmodel.map.MapViewModel
 import com.google.firebase.auth.FirebaseAuth
 
@@ -71,23 +72,24 @@ fun TripDetailScreen(
                 title = {
                     Text(
                         text = tripName,
-                        fontSize = 20.sp
+                        fontSize = 24.sp
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier.padding(bottom = 64.dp),
+            SmallFloatingActionButton(
+                modifier = Modifier.padding(bottom = 80.dp),
                 onClick = {
                     navController.navigate("add-edit-expense?editMode=false&tripId=$tripId")
-                }
+                },
+                containerColor = TripWiseGreen
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Add a new expense")
             }
@@ -111,7 +113,10 @@ fun TripDetailScreen(
                     Text(text = "Local Currency", modifier = Modifier.padding(end = 8.dp))
                     Switch(
                         checked = showLocalCurrency,
-                        onCheckedChange = { showLocalCurrency = it }
+                        onCheckedChange = { showLocalCurrency = it },
+                        colors = SwitchDefaults.colors(
+                            checkedTrackColor = TripWiseGreen
+                        )
                     )
                     Text(text = "Home Currency", modifier = Modifier.padding(start = 8.dp))
                 }

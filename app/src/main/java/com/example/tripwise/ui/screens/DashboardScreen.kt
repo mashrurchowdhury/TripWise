@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import com.example.tripwise.ui.viewmodel.auth.SignInViewModel
 import androidx.navigation.NavHostController
+import com.example.tripwise.ui.theme.TripWiseGreen
 import com.example.tripwise.ui.viewmodel.map.MapViewModel
 
 @Composable
@@ -49,8 +50,9 @@ fun DashboardScreen(
         modifier = modifier,
         floatingActionButton = {
             SmallFloatingActionButton(
-                modifier = Modifier.padding(bottom = 64.dp),
-                onClick = { navController.navigate("add-edit-trip?editMode=false") }
+                modifier = Modifier.padding(bottom = 80.dp),
+                onClick = { navController.navigate("add-edit-trip?editMode=false") },
+                containerColor = TripWiseGreen
             ) {
                 Icon(Icons.Filled.Add, "Add a new trip.")
             }

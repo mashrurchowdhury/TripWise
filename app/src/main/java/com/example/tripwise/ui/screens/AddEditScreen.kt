@@ -14,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.example.tripwise.ui.viewmodel.addedit.RegistrationEvent
 import com.example.tripwise.ui.common.InputField
 import com.google.firebase.auth.FirebaseAuth
@@ -21,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tripwise.data.FirestoreRepository
 import com.example.tripwise.ui.components.DatePickerField
+import com.example.tripwise.ui.theme.TripWiseGray
+import com.example.tripwise.ui.theme.TripWiseGreen
 
 @Composable
 fun AddEditScreen(
@@ -72,9 +75,15 @@ fun AddEditScreen(
     Scaffold(
         topBar = {
             Button(
-                onClick = { onBackClick() }
+                onClick = { onBackClick() },
+                modifier = Modifier.padding(10.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = TripWiseGreen)
             ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, "Go to previous screen")
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    "Go to previous screen",
+                    tint = TripWiseGray
+                )
             }
         },
         content = {
@@ -140,7 +149,11 @@ fun AddEditScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(start = 50.dp, top = 10.dp, end = 50.dp),
-                            enabled = !addEditTripViewModel.hasError
+                            enabled = !addEditTripViewModel.hasError,
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = TripWiseGray,
+                                    contentColor = Color.White
+                            )
                         ) {
                             if (editMode) Text("Update") else Text("Submit")
                         }
