@@ -8,6 +8,7 @@ TripWise is a travel expense management app designed to simplify trip planning, 
 
 ## Visual Preview
 ![App Screenshots](/screenshot.png)
+_Some of the main screens from TripWise. From top-left, clockwise: Login Screen, Trip Dashboard, Add Expense, Trip Expenses (Local Currency), Trip Expenses (Local Currency), Map View_
 
 ## Team members
 1. Mashrur Chowdhury (m35chowd@uwaterloo.ca)
