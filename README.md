@@ -7,6 +7,7 @@ Android
 TripWise is a travel expense management app designed to simplify trip planning, budgeting, and tracking expenses with a user-friendly interface.
 
 ## Visual Preview
+![App Screenshots](/screenshot.png)
 
 ## Team members
 1. Mashrur Chowdhury (m35chowd@uwaterloo.ca)
